@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\dx11">
+      <UniqueIdentifier>{6e5a873b-27cc-4e6b-8e1c-ec1138f3b42d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\win">
+      <UniqueIdentifier>{de20570c-fb95-400c-b36d-cb223ff6e927}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\win">
+      <UniqueIdentifier>{77ac80a6-7f9a-456b-b351-7d0c7f09b0b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\cmo">
+      <UniqueIdentifier>{6582c84f-fc9a-4da4-89b1-fe95bdf99240}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\cmo">
+      <UniqueIdentifier>{0d2a9518-4f35-418d-a0e7-6d6d28ab9b45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\dx11">
+      <UniqueIdentifier>{c2c3e20a-324e-4481-a6c1-6f3dfb86185c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\dx11\DX11ThinWrapper">
+      <UniqueIdentifier>{e98247f3-3743-442b-8a6c-10b82e082a10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\d2d">
+      <UniqueIdentifier>{878981c2-a96a-46dc-8f6e-2d897a9844c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\d2d">
+      <UniqueIdentifier>{4e9a84bb-abfd-470a-81db-c95689a62530}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\AxisConvert.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stdafx.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cmo\cmoElement.h">
+      <Filter>ヘッダー ファイル\cmo</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cmo\cmoLoader.h">
+      <Filter>ヘッダー ファイル\cmo</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cmo\cmoMesh.h">
+      <Filter>ヘッダー ファイル\cmo</Filter>
+    </ClInclude>
+    <ClInclude Include="src\win\com_ptr.hpp">
+      <Filter>ヘッダー ファイル\win</Filter>
+    </ClInclude>
+    <ClInclude Include="src\win\WICThinWrapper.h">
+      <Filter>ヘッダー ファイル\win</Filter>
+    </ClInclude>
+    <ClInclude Include="src\win\Window.h">
+      <Filter>ヘッダー ファイル\win</Filter>
+    </ClInclude>
+    <ClInclude Include="src\win\WindowProcedure.h">
+      <Filter>ヘッダー ファイル\win</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dx11\WICTextureLoader.h">
+      <Filter>ヘッダー ファイル\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dx11\DXGI_FORMAT.h">
+      <Filter>ヘッダー ファイル\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dx11\DX11ThinWrapper.h">
+      <Filter>ヘッダー ファイル\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dx11\DX11GlobalDevice.h">
+      <Filter>ヘッダー ファイル\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dx11\DX11DefaultSetting.h">
+      <Filter>ヘッダー ファイル\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dx11\DX11DefaultInitialize.h">
+      <Filter>ヘッダー ファイル\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dx11\DirectXShaderLevelDefine.h">
+      <Filter>ヘッダー ファイル\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DXGIFormatDetection.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\d2d\DX10Wrapper1.h">
+      <Filter>ヘッダー ファイル\d2d</Filter>
+    </ClInclude>
+    <ClInclude Include="src\d2d\D2DWrapper.h">
+      <Filter>ヘッダー ファイル\d2d</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ShaderBytes.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\d2d\D2DCanvasLayer.h">
+      <Filter>ヘッダー ファイル\d2d</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stdafx.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cmo\cmoLoader.cpp">
+      <Filter>ソース ファイル\cmo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cmo\cmoMesh.cpp">
+      <Filter>ソース ファイル\cmo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\win\WindowProcedure.cpp">
+      <Filter>ソース ファイル\win</Filter>
+    </ClCompile>
+    <ClCompile Include="src\win\Window.cpp">
+      <Filter>ソース ファイル\win</Filter>
+    </ClCompile>
+    <ClCompile Include="src\win\WICThinWrapper.cpp">
+      <Filter>ソース ファイル\win</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dx11\thin_wrapper\d3.cpp">
+      <Filter>ソース ファイル\dx11\DX11ThinWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dx11\thin_wrapper\d3buffer.cpp">
+      <Filter>ソース ファイル\dx11\DX11ThinWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dx11\thin_wrapper\d3shader.cpp">
+      <Filter>ソース ファイル\dx11\DX11ThinWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dx11\thin_wrapper\d3swapchain.cpp">
+      <Filter>ソース ファイル\dx11\DX11ThinWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dx11\thin_wrapper\gi.cpp">
+      <Filter>ソース ファイル\dx11\DX11ThinWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dx11\thin_wrapper\wic.cpp">
+      <Filter>ソース ファイル\dx11\DX11ThinWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dx11\DX11GlobalDevice.cpp">
+      <Filter>ソース ファイル\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dx11\DX11DefaultSetting.cpp">
+      <Filter>ソース ファイル\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dx11\DX11DefaultInitialize.cpp">
+      <Filter>ソース ファイル\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dx11\WICTextureLoader.cpp">
+      <Filter>ソース ファイル\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="src\d2d\DX10Wrapper1.cpp">
+      <Filter>ソース ファイル\d2d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\d2d\d2d.cpp">
+      <Filter>ソース ファイル\d2d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\d2d\D2DWrite.cpp">
+      <Filter>ソース ファイル\d2d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\d2d\D2DCanvasLayer.cpp">
+      <Filter>ソース ファイル\d2d</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="assets\shader\sample.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="assets\shader\skinning.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

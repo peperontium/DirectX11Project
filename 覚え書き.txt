@@ -1,0 +1,10 @@
+D2DERR_RECREATE_TARGETがD2Dの描画中に発生したらターゲット再形成必要になるらしいよ
+シェーダーバイトコードぶちまけ何とかしろ
+
+d2d周りのD2D1~~をD2Dへと下げていってみる？
+
+
+・変更点
+QueryInterface、CreateBlendStateを追加したよ
+シェーダー作成部にオーバーロード追加、型を BYTE* -> const byte* に
+一応今まで動いていたものが壊れることはないはずよ
