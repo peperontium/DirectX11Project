@@ -21,4 +21,4 @@
 
 #include "./d2d/DX10Wrapper1.h"
 #include "./d2d/D2DWrapper.h"
-#include "./d2d/D2DCanvasLayer.h"
+#include "./d2d/Sprite.h"

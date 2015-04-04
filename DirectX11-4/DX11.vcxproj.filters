@@ -102,7 +102,10 @@
     <ClInclude Include="src\ShaderBytes.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="src\d2d\D2DCanvasLayer.h">
+    <ClInclude Include="src\d2d\Canvas2D.h">
+      <Filter>ヘッダー ファイル\d2d</Filter>
+    </ClInclude>
+    <ClInclude Include="src\d2d\Sprite.h">
       <Filter>ヘッダー ファイル\d2d</Filter>
     </ClInclude>
   </ItemGroup>
@@ -167,7 +170,10 @@
     <ClCompile Include="src\d2d\D2DWrite.cpp">
       <Filter>ソース ファイル\d2d</Filter>
     </ClCompile>
-    <ClCompile Include="src\d2d\D2DCanvasLayer.cpp">
+    <ClCompile Include="src\d2d\Sprite.cpp">
+      <Filter>ソース ファイル\d2d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\d2d\Canvas2D.cpp">
       <Filter>ソース ファイル\d2d</Filter>
     </ClCompile>
   </ItemGroup>
@@ -176,6 +182,9 @@
       <Filter>リソース ファイル</Filter>
     </FxCompile>
     <FxCompile Include="assets\shader\skinning.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="assets\shader\spriteVS.hlsl">
       <Filter>リソース ファイル</Filter>
     </FxCompile>
   </ItemGroup>

@@ -92,9 +92,10 @@
     <ClInclude Include="src\cmo\cmoElement.h" />
     <ClInclude Include="src\cmo\cmoLoader.h" />
     <ClInclude Include="src\cmo\cmoMesh.h" />
-    <ClInclude Include="src\d2d\D2DCanvasLayer.h" />
+    <ClInclude Include="src\d2d\Canvas2D.h" />
     <ClInclude Include="src\d2d\D2DWrapper.h" />
     <ClInclude Include="src\d2d\DX10Wrapper1.h" />
+    <ClInclude Include="src\d2d\Sprite.h" />
     <ClInclude Include="src\dx11\DX11DefaultInitialize.h" />
     <ClInclude Include="src\dx11\DX11DefaultSetting.h" />
     <ClInclude Include="src\dx11\DX11GlobalDevice.h" />
@@ -116,10 +117,11 @@
   <ItemGroup>
     <ClCompile Include="src\cmo\cmoLoader.cpp" />
     <ClCompile Include="src\cmo\cmoMesh.cpp" />
+    <ClCompile Include="src\d2d\Canvas2D.cpp" />
     <ClCompile Include="src\d2d\d2d.cpp" />
-    <ClCompile Include="src\d2d\D2DCanvasLayer.cpp" />
     <ClCompile Include="src\d2d\D2DWrite.cpp" />
     <ClCompile Include="src\d2d\DX10Wrapper1.cpp" />
+    <ClCompile Include="src\d2d\Sprite.cpp" />
     <ClCompile Include="src\dx11\DX11DefaultInitialize.cpp" />
     <ClCompile Include="src\dx11\DX11DefaultSetting.cpp" />
     <ClCompile Include="src\dx11\DX11GlobalDevice.cpp" />
@@ -147,6 +149,9 @@
     <FxCompile Include="assets\shader\skinning.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="assets\shader\spriteVS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

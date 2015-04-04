@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 #include <d3d11.h>
-#include <d2d1_1.h>
 #include <d3dcompiler.h>
 #include <functional>
 #include <vector>
@@ -143,6 +142,12 @@ namespace DX11ThinWrapper {
 
 		//	ブレンディングステートの作成
 		std::shared_ptr<ID3D11BlendState> CreateBlendState(ID3D11Device * device, const D3D11_BLEND_DESC *desc);
+
+		//	深度ステンシルビュー設定オブジェクトの作成
+		std::shared_ptr<ID3D11DepthStencilState> CreateDepthStencilState(ID3D11Device* device, const D3D11_DEPTH_STENCIL_DESC& desc);
+
+		//	テクスチャからシェーダーリソースビューの作成
+		std::shared_ptr<ID3D11ShaderResourceView> CreateShaderResourceView(ID3D11Device* device, ID3D11Texture2D * resourceTexture);
 
 
 		void mapping(ID3D11Resource * buffer, ID3D11DeviceContext * context, std::function<void(D3D11_MAPPED_SUBRESOURCE)> function);

@@ -16,7 +16,7 @@ namespace d2 {
 
 
 	std::shared_ptr<ID2D1SolidColorBrush> CreateSolidColorBrush(
-		ID2D1RenderTarget* renderTarget, const D2D1::ColorF &color);
+		ID2D1RenderTarget* renderTarget, const D2D1_COLOR_F &color);
 	
 
 

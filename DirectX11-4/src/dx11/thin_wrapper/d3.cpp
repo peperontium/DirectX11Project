@@ -114,6 +114,26 @@ namespace DX11ThinWrapper {
 		}
 
 
+		std::shared_ptr<ID3D11DepthStencilState> CreateDepthStencilState(ID3D11Device* device, const D3D11_DEPTH_STENCIL_DESC& desc) {
+			ID3D11DepthStencilState* dss;
+			HRESULT hr = device->CreateDepthStencilState(&desc, &dss);
+			if (FAILED(hr))	throw std::runtime_error("ID3D11DepthStencilStateの作成に失敗");
+			return std::shared_ptr<ID3D11DepthStencilState>(dss, DX11ThinWrapper::ReleaseIUnknown);
+
+		};
+
+
+		//	テクスチャからシェーダー・リソース・ビューを作成
+		std::shared_ptr<ID3D11ShaderResourceView> CreateShaderResourceView(ID3D11Device* device, ID3D11Texture2D * resourceTexture) {
+
+			ID3D11ShaderResourceView * srv;
+			auto hr = device->CreateShaderResourceView(resourceTexture, nullptr, &srv);
+			if (FAILED(hr)) throw std::runtime_error("ID3D11ShaderResourceViewの作成に失敗しました.");
+			return std::shared_ptr<ID3D11ShaderResourceView>(srv, DX11ThinWrapper::ReleaseIUnknown);
+		};
+
+		
+
 		void mapping(
 			ID3D11Resource * buffer, ID3D11DeviceContext * context, std::function<void(D3D11_MAPPED_SUBRESOURCE)> function
 		) {

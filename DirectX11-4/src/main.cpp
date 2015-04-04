@@ -3,6 +3,8 @@
 #pragma comment(lib, "winmm.lib")
 #include <mmsystem.h>
 
+#include "./d2d/Sprite.h"
+
 int APIENTRY _tWinMain(
 	HINSTANCE hInstance,
 	HINSTANCE,
@@ -12,11 +14,11 @@ int APIENTRY _tWinMain(
 	::CoInitialize(NULL); // なくても動くけど終了時例外を吐く
 	
 	// ウィンドウ生成
-	auto modeDesc = DX11ThinWrapper::gi::GetOptDisplayMode(800, 600);
+	DXGI_MODE_DESC modeDesc = DX11ThinWrapper::gi::GetOptDisplayMode(800, 600);
 	win::Window window(
 		TEXT("window"), TEXT("window"), {0, 0, modeDesc.Width, modeDesc.Height}, WS_OVERLAPPEDWINDOW, win::DefaultProcedure
 	);
-
+	
 	MSG msg = {};
 
 	{
@@ -56,17 +58,17 @@ int APIENTRY _tWinMain(
 		//	プロジェクション行列設定
 		//	定数バッファは float*4の倍数のサイズである必要がある
 		//	その他はまりそうなところ ： https://twitter.com/43x2/status/144821841977028608
-		{
-			float aspectRatio = modeDesc.Width / static_cast<float>(modeDesc.Height);
-			DirectX::XMMATRIX mtxProj = DirectX::XMMatrixPerspectiveFovLH(3.1415926f / 6.0f, aspectRatio, 1.0f, 100.0f);
-			XMStoreFloat4x4(&param, DirectX::XMMatrixTranspose(mtxProj));
-			auto projBuffer = DX11ThinWrapper::d3::CreateConstantBuffer(
-				device, &param, sizeof(DirectX::XMFLOAT4X4), D3D11_CPU_ACCESS_WRITE
-				);
-			ID3D11Buffer * projectionBuffers[] = { projBuffer.get() };
-			//	スロット0にプロジェクション行列設定
-			context->VSSetConstantBuffers(0, 1, projectionBuffers);
-		}
+
+		float aspectRatio = modeDesc.Width / static_cast<float>(modeDesc.Height);
+		DirectX::XMMATRIX mtxProj = DirectX::XMMatrixPerspectiveFovLH(3.1415926f / 6.0f, aspectRatio, 1.0f, 100.0f);
+		XMStoreFloat4x4(&param, DirectX::XMMatrixTranspose(mtxProj));
+		auto projBuffer = DX11ThinWrapper::d3::CreateConstantBuffer(
+			device, &param, sizeof(DirectX::XMFLOAT4X4), D3D11_CPU_ACCESS_WRITE
+			);
+		ID3D11Buffer * projectionBuffers[] = { projBuffer.get() };
+		//	スロット0にプロジェクション行列設定
+		context->VSSetConstantBuffers(0, 1, projectionBuffers);
+		
 
 
 		// カメラ行列設定
@@ -119,15 +121,12 @@ int APIENTRY _tWinMain(
 		//	DirectX10.1デバイスを11のものと同じ設定で作成
 		//--------------------------
 		dx10::DX10DeviceSharedGuard deviceGuard10(device);
-		d2::D2DCanvasLayer canvas2d;
+		d2::Canvas2D canvas2D;
 
-		canvas2d.init(swapChain.get());
-		auto brush2D = canvas2d.createBrush(D2D1::ColorF(1.0f, 0.5f, 0.0f, 1.0f));
-//		auto textFormat = d2::CreateTextFormat(L"ＭＳ 明朝", 30.0f);
-		auto textFormat = d2::CreateTextFormat(L"メイリオ", 30.0f);
-
-
-
+		canvas2D.init(device, modeDesc.Width, modeDesc.Height);
+		auto txtes = DX11ThinWrapper::d3::CreateWICTextureFromFile(device,L"./assets/model/body.png");
+		d2::Sprite sprite(txtes, &canvas2D);
+		d2::TextSprite textspr(&canvas2D,L"メイリオ",50.0f);
 
 		int curTime = 0, prevTime = timeGetTime();
 		const int Frame_Per_Second = 60;
@@ -165,6 +164,10 @@ int APIENTRY _tWinMain(
 					context->VSSetConstantBuffers(1, 1, cameraBuffers);
 
 
+					//	スロット0にプロジェクション行列設定
+					context->VSSetConstantBuffers(0, 1, projectionBuffers);
+
+
 					//	スキンメッシュモデルの行列更新、描画
 					skinnedMesh.setAnimationFrame(timer % 60);
 					skinnedMesh.updateMatrix(
@@ -172,23 +175,20 @@ int APIENTRY _tWinMain(
 						);
 					skinnedMesh.render(context.get(), 2);
 
-
 					
-					//	Direct2D側での描画開始。一応この間も3d描画はできるみたいだけどね。
-					auto rt2D = canvas2d.beginDraw().lock();
+					canvas2D.beginDraw(context.get());
+					
+					if (timer > 120) {
+						sprite.setTransform(D2D1::Matrix3x2F::Translation(0,0));
+						sprite.render(context.get());
+					}
+					wchar_t text[100];
+					wsprintf(text, L"timer = %d", timer);
+					textspr.drawText(text,lstrlenW(text),D2D1::RectF(0,400,600,800));
+					textspr.render(context.get());
 
-					brush2D->SetColor(D2D1::ColorF(1.0f,1.0f, 1.0f, 0.80f));
-					rt2D->DrawLine(
-						D2D1::Point2F(0, 500),
-						D2D1::Point2F(800, 500),
-						brush2D.get(), 200.0f);
-
-					brush2D->SetColor(D2D1::ColorF(0.40f, 0.20f, 0.0f, 1.0f));
-					std::wstring txt = L"Direct2Dだよ\n線引いたりテキスト描画したりできるすごいやつだよ";
-					rt2D->DrawText(txt.c_str(), txt.length(), textFormat.get(),D2D1::RectF(0,400,800,600), brush2D.get());
-
-					canvas2d.endDraw(context.get());
-
+					canvas2D.endDraw(context.get());
+					/**/
 					if (FAILED(swapChain->Present(0, 0))) break;
 				}
 			}

@@ -16,6 +16,7 @@ http://masafumi.cocolog-nifty.com/masafumis_diary/2013/02/windows-storefb.html
 ・Direct2D
 とりあえず導入しただけといった感じ。サンプルソースをクラス化してD3Dのマルチサンプリングに対応させただけ。
 。
+スプライトとテキスト描画実装したが…スプライトもどきなので2DのBegin-End間で3D描画しようとするとアカンことに。何とかしなきゃ
 参考＜Direct2D と Direct3D 11 の共有方法＞
 http://mitsunagistudio.net/tips/d2d-d3d11-sharing/
 
