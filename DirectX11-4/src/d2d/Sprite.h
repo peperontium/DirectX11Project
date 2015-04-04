@@ -20,20 +20,6 @@ namespace d2 {
 
 	public:
 		~SpriteBase() {}
-/*		//	setcolorÇ‡ÅH
-		void setTransform(const D2D_MATRIX_3X2_F& transform) {
-			_transform = *D2D1::Matrix3x2F::ReinterpretBaseType(&transform);
-		}
-		void setTextureTransform(const D2D_MATRIX_3X2_F& transform) {
-			_textureTransform = *D2D1::Matrix3x2F::ReinterpretBaseType(&transform);
-		}
-		const D2D_MATRIX_3X2_F& getTransform() const{
-			return _transform;
-		}
-		const D2D_MATRIX_3X2_F& getTextureTransform() const{
-			return _textureTransform;
-		}
-		*/
 	};
 
 	class Sprite : public SpriteBase{
