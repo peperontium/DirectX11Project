@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Canvas2D.h"
+#include "CanvasLayer2D.h"
 #include <string>
 
 namespace d2 {
@@ -10,8 +10,8 @@ namespace d2 {
 		std::shared_ptr<ID3D11ShaderResourceView>	_texture;
 		D2D_MATRIX_3X2_F _transform;
 		D2D_MATRIX_3X2_F _textureTransform;
-		Canvas2D* _targetCanvas;
-		SpriteBase(std::shared_ptr<ID3D11ShaderResourceView> texture, Canvas2D* canvas) :
+		CanvasLayer2D* _targetCanvas;
+		SpriteBase(std::shared_ptr<ID3D11ShaderResourceView> texture, CanvasLayer2D* canvas) :
 			_texture(texture),
 			_transform(D2D1::Matrix3x2F::Identity()),
 			_textureTransform(D2D1::Matrix3x2F::Identity()),
@@ -31,8 +31,8 @@ namespace d2 {
 		//	2Dでの変換行列から3Dの座標変換行列を取得
 		D2D_MATRIX_3X2_F _GetTransformMatrix3D(const D2D_MATRIX_3X2_F& transform2D)const {
 
-			float canvasWidth = _targetCanvas->getWidth();
-			float canvasHeight = _targetCanvas->getHeight();
+			float canvasWidth = _targetCanvas->getWidth()*1.0f;
+			float canvasHeight = _targetCanvas->getHeight()*1.0f;
 
 			D2D_MATRIX_3X2_F converted = transform2D;
 			converted._11 *= _texWidth / canvasWidth;
@@ -47,7 +47,7 @@ namespace d2 {
 		}
 
 	public:
-		Sprite(std::shared_ptr<ID3D11ShaderResourceView> texture, Canvas2D* canvas) :
+		Sprite(std::shared_ptr<ID3D11ShaderResourceView> texture, CanvasLayer2D* canvas) :
 			SpriteBase(texture,canvas)
 		{
 			_ReadTextureSize();
@@ -57,7 +57,7 @@ namespace d2 {
 			_texture = texture;
 			_ReadTextureSize();
 		}
-		void render(ID3D11DeviceContext* context, Canvas2D::BlendMode blendMode = Canvas2D::BlendMode::Default)const{
+		void render(ID3D11DeviceContext* context, CanvasLayer2D::BlendMode blendMode = CanvasLayer2D::BlendMode::Default)const{
 			//	T /= screen -> S *= (tex/scr)
 			D2D_MATRIX_3X2_F transform3D = _GetTransformMatrix3D(_transform);
 			_targetCanvas->updateConstantBuffer(context, transform3D, _textureTransform);
@@ -84,7 +84,6 @@ namespace d2 {
 		//!	Direct2D側のレンダーターゲット
 		std::shared_ptr<ID2D1RenderTarget>	_renderTarget2D;
 		
-		//	排他制御できるようにすべきかも
 		mutable bool	  _usingTextureByD2D;
 
 		std::shared_ptr<ID2D1SolidColorBrush>	_brush;
@@ -113,7 +112,7 @@ namespace d2 {
 		}
 		
 	public:
-		TextSprite(Canvas2D* canvas,
+		TextSprite(CanvasLayer2D* canvas,
 			const wchar_t* fontName = L"メイリオ", float fontSize = 20.0f, D2D_COLOR_F color = D2D1::ColorF(D2D1::ColorF::White));
 		void setColor(D2D_COLOR_F color) {
 			_brush->SetColor(color);
@@ -137,7 +136,7 @@ namespace d2 {
 				_usingTextureByD2D = false;
 			}
 			_targetCanvas->updateConstantBuffer(context,_transform, _textureTransform);
-			_targetCanvas->renderTexture(context, _texture.get(), Canvas2D::BlendMode::Default);
+			_targetCanvas->renderTexture(context, _texture.get(), CanvasLayer2D::BlendMode::PreMultiPlyedAlpha);
 		}
 	};
 

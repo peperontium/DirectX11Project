@@ -1,4 +1,4 @@
-#include "Canvas2D.h"
+#include "CanvasLayer2D.h"
 
 
 #include "../dx11/DirectXShaderLevelDefine.h"
@@ -6,7 +6,6 @@
 #include "./ShaderBytes.h"
 #include "../dx11/DX11ThinWrapper.h"
 
-#include <fstream>
 
 namespace {
 	struct SpriteConstBuffer {
@@ -18,7 +17,7 @@ namespace {
 
 namespace d2 {
 
-	void Canvas2D::init(ID3D11Device* device, int canvasWidth, int canvasHeight) {
+	void CanvasLayer2D::init(ID3D11Device* device, int canvasWidth, int canvasHeight) {
 
 		using namespace DX11ThinWrapper;
 
@@ -31,8 +30,10 @@ namespace d2 {
 			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
 
+
 		_vertexShader = d3::CreateVertexShader(device, cso::compiledShader::simpleVS, sizeof(cso::compiledShader::simpleVS));
 		_inputLayout = d3::CreateInputLayout(device, layout, _countof(layout), cso::compiledShader::simpleVS, sizeof(cso::compiledShader::simpleVS));
+
 
 		_pixelShader = d3::CreatePixelShader(
 			device, cso::compiledShader::simplePS, sizeof(cso::compiledShader::simplePS)
@@ -55,26 +56,55 @@ namespace d2 {
 		_depthStencilState = d3::CreateDepthStencilState(device, dsd);
 
 
-		//	αブレンド設定
-		D3D11_BLEND_DESC blendDesc[] = { {
-			FALSE, FALSE, {
-				{
-					TRUE,
-					D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA, D3D11_BLEND_OP_ADD,
-					D3D11_BLEND_ZERO, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD,
-					D3D11_COLOR_WRITE_ENABLE_ALL
+		//	ブレンド設定
+		{
+			D3D11_BLEND_DESC blendDesc[] = { {
+				FALSE, FALSE, {
+					{
+						TRUE,
+						D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA, D3D11_BLEND_OP_ADD,
+						D3D11_BLEND_ONE, D3D11_BLEND_ZERO, D3D11_BLEND_OP_ADD,
+						D3D11_COLOR_WRITE_ENABLE_ALL
+					}
 				}
-			}
-		} };
+			} };
+			_blendState[BlendMode::Default] = d3::CreateBlendState(device, blendDesc);
+		}
+		{
+			D3D11_BLEND_DESC blendDesc[] = { {
+				FALSE, FALSE, {
+					{
+						TRUE,
+						D3D11_BLEND_ONE, D3D11_BLEND_INV_SRC_ALPHA, D3D11_BLEND_OP_ADD,
+						D3D11_BLEND_ONE, D3D11_BLEND_ZERO, D3D11_BLEND_OP_ADD,
+						D3D11_COLOR_WRITE_ENABLE_ALL
+					}
+				}
+			} };
+			_blendState[BlendMode::PreMultiPlyedAlpha] = d3::CreateBlendState(device, blendDesc);
+		}
+		{
+			D3D11_BLEND_DESC blendDesc[] = { {
+				FALSE, FALSE, {
+					{
+						TRUE,
+						D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD,
+						D3D11_BLEND_ZERO, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD,
+						D3D11_COLOR_WRITE_ENABLE_ALL
+					}
+				}
+			} };
+			_blendState[BlendMode::Add] = d3::CreateBlendState(device, blendDesc);
+		}
 
-		_blendState[BlendMode::Default] = d3::CreateBlendState(device, blendDesc);
+
 
 		//	定数バッファつくる
 		_constantBuffer = d3::CreateConstantBuffer(device, nullptr, sizeof(SpriteConstBuffer), D3D11_CPU_ACCESS_WRITE);
 	}
 
 
-	void Canvas2D::updateConstantBuffer(ID3D11DeviceContext* context, const D2D_MATRIX_3X2_F& transform,
+	void CanvasLayer2D::updateConstantBuffer(ID3D11DeviceContext* context, const D2D_MATRIX_3X2_F& transform,
 		const D2D_MATRIX_3X2_F& textureTransform) {
 		
 		DX11ThinWrapper::d3::mapping(_constantBuffer.get(), context, [&](D3D11_MAPPED_SUBRESOURCE resource){
@@ -98,13 +128,13 @@ namespace d2 {
 	}
 
 
-	void Canvas2D::renderTexture(ID3D11DeviceContext* context, ID3D11ShaderResourceView *texture, BlendMode blendMode) {
+	void CanvasLayer2D::renderTexture(ID3D11DeviceContext* context, ID3D11ShaderResourceView *texture, BlendMode blendMode) {
 
 			FLOAT blendFactor[] = { 1, 1, 1, 1 };
 			context->OMSetBlendState(_blendState[blendMode].get(), blendFactor, 0xffffffff);
 
 			ID3D11Buffer* buffers[] = {_constantBuffer.get()};
-			context->VSSetConstantBuffers(0, 1, buffers);
+			context->VSSetConstantBuffers(3, 1, buffers);
 
 			context->PSSetShaderResources(0, 1, &texture);
 

@@ -32,7 +32,7 @@ namespace d2 {
 
 
 
-	TextSprite::TextSprite(Canvas2D* canvas, const wchar_t* fontName, float fontSize, D2D_COLOR_F color) :
+	TextSprite::TextSprite(CanvasLayer2D* canvas, const wchar_t* fontName, float fontSize, D2D_COLOR_F color) :
 		SpriteBase(nullptr,canvas),
 		_usingTextureByD2D(false) {
 
@@ -60,7 +60,7 @@ namespace d2 {
 		auto tex2D = d3::CreateTexture2D(device, canvasDesc);
 
 		//	共有のためのD3D11のキーミューテックスを取得
-		_keyedMutex11 = QueryInterface<IDXGIKeyedMutex>(tex2D.get());
+		_keyedMutex11 = comUtil::QueryInterface<IDXGIKeyedMutex>(tex2D.get());
 
 
 		//	DX10.1側で使う共有サーフェイスを作成
@@ -68,7 +68,7 @@ namespace d2 {
 
 
 		//	共有のためのD3D10.1のキーミューテックスを取得
-		_keyedMutex10 = QueryInterface<IDXGIKeyedMutex>(surface10.get());
+		_keyedMutex10 = comUtil::QueryInterface<IDXGIKeyedMutex>(surface10.get());
 
 		// D2D のレンダーターゲットを D3D 10.1 の共有サーフェイスから生成
 		_renderTarget2D = d2::CreateDXGISurfaceRenderTarget(

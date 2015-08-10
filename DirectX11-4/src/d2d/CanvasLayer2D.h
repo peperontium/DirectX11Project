@@ -7,7 +7,7 @@
 
 namespace d2 {
 
-	class Canvas2D {
+	class CanvasLayer2D {
 	private:
 		struct SpriteVertex {
 			DirectX::XMFLOAT3 pos;
@@ -19,7 +19,7 @@ namespace d2 {
 		};
 
 	public:
-		enum BlendMode { Default, Add, BlendMode_Max };
+		enum BlendMode { Default, PreMultiPlyedAlpha, Add, BlendMode_Max };
 
 	private:
 		std::shared_ptr<ID3D11Buffer>			_vertexBuffer;
