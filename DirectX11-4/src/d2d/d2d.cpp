@@ -3,8 +3,7 @@
 #include <stdexcept>
 #pragma comment (lib, "d2d1.lib")
 
-#include "../dx11/DX11ThinWrapper.h"
-
+#include "../comUtil.h"
 
 namespace {
 	std::shared_ptr<ID2D1Factory> CreateD2D1Factory() {
@@ -14,7 +13,7 @@ namespace {
 		if (FAILED(hr))
 			throw std::runtime_error("D2D1Factoryの作成に失敗しました");
 		
-		return std::shared_ptr<ID2D1Factory>(pD2DFactory, DX11ThinWrapper::ReleaseIUnknown);
+		return std::shared_ptr<ID2D1Factory>(pD2DFactory, comUtil::ReleaseIUnknown);
 	}
 }
 
@@ -29,7 +28,7 @@ namespace d2 {
 		if (FAILED(hr))
 			throw std::runtime_error("DXGIサーフェイスへのレンダーターゲットの作成に失敗しました");
 
-		return std::shared_ptr<ID2D1RenderTarget>(pRenderTarget, DX11ThinWrapper::ReleaseIUnknown);
+		return std::shared_ptr<ID2D1RenderTarget>(pRenderTarget, comUtil::ReleaseIUnknown);
 		
 	}
 
@@ -42,7 +41,7 @@ namespace d2 {
 		if (FAILED(hr))
 			throw(std::runtime_error("ID2D1SolidColorBrush　色ブラシの作成に失敗しました"));
 		
-		return(std::shared_ptr<ID2D1SolidColorBrush>(pBrush, DX11ThinWrapper::ReleaseIUnknown));
+		return(std::shared_ptr<ID2D1SolidColorBrush>(pBrush, comUtil::ReleaseIUnknown));
 	}
 
 

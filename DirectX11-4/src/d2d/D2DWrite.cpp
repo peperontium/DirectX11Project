@@ -3,7 +3,7 @@
 
 #pragma comment (lib, "Dwrite.lib")
 
-#include "../dx11/DX11ThinWrapper.h"
+#include "../comUtil.h"
 
 
 namespace {
@@ -17,7 +17,7 @@ namespace {
 		if (FAILED(hr))
 			throw std::runtime_error("DWriteFactoryÇÃçÏê¨Ç…é∏îsÇµÇ‹ÇµÇΩ");
 
-		return std::shared_ptr<IDWriteFactory>(pWriteFactory, DX11ThinWrapper::ReleaseIUnknown);
+		return std::shared_ptr<IDWriteFactory>(pWriteFactory, comUtil::ReleaseIUnknown);
 	}
 }
 
@@ -42,7 +42,7 @@ namespace d2 {
 		if (FAILED(hr))
 			throw std::runtime_error("IDWriteTextFormatÇÃçÏê¨Ç…é∏îsÇµÇ‹ÇµÇΩ");
 
-		return std::shared_ptr<IDWriteTextFormat>(pFormat, DX11ThinWrapper::ReleaseIUnknown);
+		return std::shared_ptr<IDWriteTextFormat>(pFormat, comUtil::ReleaseIUnknown);
 
 	}
 }

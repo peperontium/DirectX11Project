@@ -27,6 +27,11 @@ namespace win {
 		Window(const TCHAR * classname, const TCHAR * title, RECT rc, DWORD windowStyle, WNDPROC wndProc);
 		~Window();
 
+		void setShowState(int nCmdShow)const{
+			ShowWindow(m_hWnd, nCmdShow);
+			//UpdateWindow(m_hWnd);
+		}
+
 		HWND getHWnd() const { return m_hWnd; };
 
 		Window(const Window &) = delete;

@@ -42,9 +42,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\AxisConvert.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="src\stdafx.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -90,23 +87,41 @@
     <ClInclude Include="src\dx11\DirectXShaderLevelDefine.h">
       <Filter>ヘッダー ファイル\dx11</Filter>
     </ClInclude>
-    <ClInclude Include="src\DXGIFormatDetection.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="src\d2d\DX10Wrapper1.h">
       <Filter>ヘッダー ファイル\d2d</Filter>
     </ClInclude>
     <ClInclude Include="src\d2d\D2DWrapper.h">
       <Filter>ヘッダー ファイル\d2d</Filter>
     </ClInclude>
-    <ClInclude Include="src\ShaderBytes.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="src\d2d\Canvas2D.h">
-      <Filter>ヘッダー ファイル\d2d</Filter>
-    </ClInclude>
     <ClInclude Include="src\d2d\Sprite.h">
       <Filter>ヘッダー ファイル\d2d</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cmo\AxisConvert.h">
+      <Filter>ヘッダー ファイル\cmo</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DXGIFormatDetection.h">
+      <Filter>ヘッダー ファイル\cmo</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ShaderBytes.h">
+      <Filter>ヘッダー ファイル\d2d</Filter>
+    </ClInclude>
+    <ClInclude Include="src\System.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dx11\DX11ResourceCache.h">
+      <Filter>ヘッダー ファイル\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SceneLayer3D.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\d2d\CanvasLayer2D.h">
+      <Filter>ヘッダー ファイル\d2d</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Camera.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comUtil.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -173,8 +188,20 @@
     <ClCompile Include="src\d2d\Sprite.cpp">
       <Filter>ソース ファイル\d2d</Filter>
     </ClCompile>
-    <ClCompile Include="src\d2d\Canvas2D.cpp">
+    <ClCompile Include="src\System.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dx11\DX11ResourceCache.cpp">
+      <Filter>ソース ファイル\dx11</Filter>
+    </ClCompile>
+    <ClCompile Include="src\d2d\CanvasLayer2D.cpp">
       <Filter>ソース ファイル\d2d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneLayer3D.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

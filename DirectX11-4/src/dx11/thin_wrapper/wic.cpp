@@ -9,7 +9,7 @@ namespace DX11ThinWrapper{
 			ID3D11ShaderResourceView * textureView;
 			auto hr = DirectX::CreateWICTextureFromFile(device, path, nullptr, &textureView);
 			if (FAILED(hr)) throw std::runtime_error("テクスチャファイルが読み込めませんでした．");
-			return std::shared_ptr<ID3D11ShaderResourceView>(textureView, ReleaseIUnknown);
+			return std::shared_ptr<ID3D11ShaderResourceView>(textureView, comUtil::ReleaseIUnknown);
 		}
 	}
 }

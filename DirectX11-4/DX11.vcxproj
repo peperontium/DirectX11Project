@@ -89,10 +89,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\comUtil.h" />
+    <ClInclude Include="src\SceneLayer3D.h" />
+    <ClInclude Include="src\dx11\DX11ResourceCache.h" />
+    <ClInclude Include="src\System.h" />
+    <ClInclude Include="src\cmo\AxisConvert.h" />
     <ClInclude Include="src\cmo\cmoElement.h" />
     <ClInclude Include="src\cmo\cmoLoader.h" />
     <ClInclude Include="src\cmo\cmoMesh.h" />
-    <ClInclude Include="src\d2d\Canvas2D.h" />
+    <ClInclude Include="src\d2d\CanvasLayer2D.h" />
     <ClInclude Include="src\d2d\D2DWrapper.h" />
     <ClInclude Include="src\d2d\DX10Wrapper1.h" />
     <ClInclude Include="src\d2d\Sprite.h" />
@@ -105,7 +111,6 @@
       <FileType>CppHeader</FileType>
     </ClInclude>
     <ClInclude Include="src\dx11\WICTextureLoader.h" />
-    <ClInclude Include="src\AxisConvert.h" />
     <ClInclude Include="src\DXGIFormatDetection.h" />
     <ClInclude Include="src\ShaderBytes.h" />
     <ClInclude Include="src\stdafx.h" />
@@ -115,9 +120,10 @@
     <ClInclude Include="src\win\WindowProcedure.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\cmo\cmoLoader.cpp" />
     <ClCompile Include="src\cmo\cmoMesh.cpp" />
-    <ClCompile Include="src\d2d\Canvas2D.cpp" />
+    <ClCompile Include="src\d2d\CanvasLayer2D.cpp" />
     <ClCompile Include="src\d2d\d2d.cpp" />
     <ClCompile Include="src\d2d\D2DWrite.cpp" />
     <ClCompile Include="src\d2d\DX10Wrapper1.cpp" />
@@ -125,6 +131,7 @@
     <ClCompile Include="src\dx11\DX11DefaultInitialize.cpp" />
     <ClCompile Include="src\dx11\DX11DefaultSetting.cpp" />
     <ClCompile Include="src\dx11\DX11GlobalDevice.cpp" />
+    <ClCompile Include="src\dx11\DX11ResourceCache.cpp" />
     <ClCompile Include="src\dx11\thin_wrapper\d3buffer.cpp" />
     <ClCompile Include="src\dx11\thin_wrapper\d3.cpp" />
     <ClCompile Include="src\dx11\thin_wrapper\gi.cpp" />
@@ -133,10 +140,12 @@
     <ClCompile Include="src\dx11\thin_wrapper\wic.cpp" />
     <ClCompile Include="src\dx11\WICTextureLoader.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\SceneLayer3D.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\System.cpp" />
     <ClCompile Include="src\win\WICThinWrapper.cpp" />
     <ClCompile Include="src\win\Window.cpp" />
     <ClCompile Include="src\win\WindowProcedure.cpp" />

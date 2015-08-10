@@ -52,8 +52,6 @@ namespace win {
 		static_RegisterClass(classname, wndProc);
 		m_hWnd = static_CreateWindow(classname, title, rc, windowStyle, wndProc);
 
-		ShowWindow(m_hWnd, SW_SHOW);
-		UpdateWindow(m_hWnd);
 	}
 
 	Window::~Window() {

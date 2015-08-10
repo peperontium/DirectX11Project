@@ -16,13 +16,13 @@ namespace win{
 
 	LRESULT CALLBACK DefaultProcedure(HWND hWnd, UINT msg, UINT wParam, LONG lParam) {
 		static_environment = std::make_tuple(hWnd, msg, wParam, lParam);
-
+		
 		HRESULT hr = S_OK;
 
 		switch (msg) {
 		case WM_DESTROY:
 			PostQuitMessage(0);
-			return 0;
+			break;
 
 		case WM_KEYDOWN:
 			switch (wParam) {

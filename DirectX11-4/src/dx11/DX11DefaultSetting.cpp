@@ -3,8 +3,7 @@
 namespace dx11 {
 
 	D3D11_SAMPLER_DESC SamplerState(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressMode) {
-		D3D11_SAMPLER_DESC desc;
-		ZeroMemory(&desc, sizeof(desc));
+		D3D11_SAMPLER_DESC desc{};
 
 		desc.Filter = filter;
 		desc.AddressU = addressMode;

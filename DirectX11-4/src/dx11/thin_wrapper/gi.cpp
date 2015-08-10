@@ -8,14 +8,14 @@ namespace {
 		IDXGIFactory * factory = nullptr;
 		auto hr = ::CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&factory));
 		if (FAILED(hr)) throw std::runtime_error("IDXGIFactoryの生成に失敗しました.");
-		return std::shared_ptr<IDXGIFactory>(factory, DX11ThinWrapper::ReleaseIUnknown);
+		return std::shared_ptr<IDXGIFactory>(factory, comUtil::ReleaseIUnknown);
 	}
 
 	std::shared_ptr<IDXGIAdapter> CreateAdapter() {
 		IDXGIAdapter * adapter = nullptr;
 		auto hr = CreateFactory()->EnumAdapters(0, &adapter);
 		if (FAILED(hr)) throw std::runtime_error("IDXGIAdapterの取得に失敗しました.");
-		return std::shared_ptr<IDXGIAdapter>(adapter, DX11ThinWrapper::ReleaseIUnknown);
+		return std::shared_ptr<IDXGIAdapter>(adapter, comUtil::ReleaseIUnknown);
 	}
 }
 
@@ -26,7 +26,7 @@ namespace DX11ThinWrapper {
 			IDXGIOutput * display = nullptr;
 			auto hr = CreateAdapter()->EnumOutputs(i, &display);
 			if (FAILED(hr)) throw std::runtime_error("ディスプレイの取得に失敗しました.");
-			return std::shared_ptr<IDXGIOutput>(display, ReleaseIUnknown);
+			return std::shared_ptr<IDXGIOutput>(display, comUtil::ReleaseIUnknown);
 		}
 
 		void GetDisplayModes(DXGI_MODE_DESC* pModeDesc, UINT display_i, DXGI_FORMAT format, UINT * pNum) {
@@ -68,7 +68,7 @@ namespace DX11ThinWrapper {
 			IDXGIFactory * factory = nullptr;
 			auto hr = adapter->GetParent(__uuidof(IDXGIFactory), (void**)&factory);
 			if (FAILED(hr)) throw std::runtime_error("アダプタからファクトリが取得できませんでした.");
-			return std::shared_ptr<IDXGIFactory>(factory, ReleaseIUnknown);
+			return std::shared_ptr<IDXGIFactory>(factory, comUtil::ReleaseIUnknown);
 		}
 
 		std::shared_ptr<IDXGIFactory> AccessGIFactory(ID3D11Device * device) {
@@ -79,21 +79,21 @@ namespace DX11ThinWrapper {
 			IDXGIDevice1 * dxgiDevice = nullptr;
 			auto hr = device->QueryInterface(__uuidof(IDXGIDevice1), (void**)&dxgiDevice);
 			if (FAILED(hr)) throw std::runtime_error("デバイスからインタフェースが取得できませんでした.");
-			return std::shared_ptr<IDXGIDevice1>(dxgiDevice, ReleaseIUnknown);
+			return std::shared_ptr<IDXGIDevice1>(dxgiDevice, comUtil::ReleaseIUnknown);
 		}
 
 		std::shared_ptr<IDXGIAdapter> AccessAdapter(ID3D11Device * device) {
 			IDXGIAdapter * adapter = nullptr;
 			auto hr = AccessInterface(device)->GetAdapter(&adapter);
 			if (FAILED(hr)) throw std::runtime_error("デバイスからアダプタが取得できませんでした.");
-			return std::shared_ptr<IDXGIAdapter>(adapter, ReleaseIUnknown);
+			return std::shared_ptr<IDXGIAdapter>(adapter, comUtil::ReleaseIUnknown);
 		}
 
 		std::shared_ptr<IDXGISurface> AccessSurface(ID3D11Texture2D * tex) {
 			IDXGISurface * surface;
 			auto hr = tex->QueryInterface(__uuidof(IDXGISurface), (void**)&surface);
 			if (FAILED(hr)) throw std::runtime_error("テクスチャからサーフェイスが取得できませんでした.");
-			return std::shared_ptr<IDXGISurface>(surface, ReleaseIUnknown);
+			return std::shared_ptr<IDXGISurface>(surface, comUtil::ReleaseIUnknown);
 		}
 	};
 }

@@ -44,7 +44,7 @@ namespace DX11ThinWrapper {
 			ID3D11RenderTargetView * view = nullptr;
 			auto hr = AccessD3Device(swapChain)->CreateRenderTargetView(AccessBackBuffer(swapChain).get(), nullptr, &view);
 			if (FAILED(hr)) throw std::runtime_error("レンダーターゲットビューの生成に失敗しました.");
-			return std::shared_ptr<ID3D11RenderTargetView>(view, ReleaseIUnknown);
+			return std::shared_ptr<ID3D11RenderTargetView>(view, comUtil::ReleaseIUnknown);
 		}
 		std::shared_ptr<ID3D11DepthStencilView> CreateDepthStencilView(IDXGISwapChain * swapChain) {
 			auto device = AccessD3Device(swapChain);
@@ -61,14 +61,14 @@ namespace DX11ThinWrapper {
 			auto hr = device->CreateDepthStencilView(depthBuffer.get(), &descDSV, &depthStencilView);
 			if (FAILED(hr)) throw std::runtime_error("深度ステンシルビューの生成に失敗しました.");
 
-			return std::shared_ptr<ID3D11DepthStencilView>(depthStencilView, ReleaseIUnknown);
+			return std::shared_ptr<ID3D11DepthStencilView>(depthStencilView, comUtil::ReleaseIUnknown);
 		}
 
 		std::shared_ptr<IDXGISwapChain> CreateSwapChain(ID3D11Device * device, DXGI_SWAP_CHAIN_DESC sd) {
 			IDXGISwapChain * swapChain = nullptr;
 			auto hr = gi::AccessGIFactory(device)->CreateSwapChain(device, &sd, &swapChain);
 			if (FAILED(hr)) throw std::runtime_error("スワップチェーンの生成に失敗しました.");
-			return std::shared_ptr<IDXGISwapChain>(swapChain, ReleaseIUnknown);
+			return std::shared_ptr<IDXGISwapChain>(swapChain, comUtil::ReleaseIUnknown);
 		}
 
 		UINT CheckMultisampleQualityLevels(ID3D11Device * device, DXGI_FORMAT format, UINT sampleCount) {

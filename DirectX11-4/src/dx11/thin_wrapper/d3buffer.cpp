@@ -21,7 +21,7 @@ namespace {
 		ID3D11Buffer* buffer = nullptr;
 		auto hr = device->CreateBuffer(&BufferDesc, (data == nullptr) ? nullptr : resource.get(), &buffer);
 		if (FAILED(hr)) throw std::runtime_error("ID3D11BufferÇÃê∂ê¨Ç…é∏îsÇµÇ‹ÇµÇΩ.");
-		return std::shared_ptr<ID3D11Buffer>(buffer, DX11ThinWrapper::ReleaseIUnknown);
+		return std::shared_ptr<ID3D11Buffer>(buffer, comUtil::ReleaseIUnknown);
 	}
 }
 

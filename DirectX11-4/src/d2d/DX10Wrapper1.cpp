@@ -4,7 +4,7 @@
 #pragma comment (lib, "d2d1.lib")
 
 
-#include "../dx11/DX11ThinWrapper.h"
+#include "../comUtil.h"
 
 namespace {
 
@@ -32,7 +32,7 @@ namespace {
 			&device10
 			);
 		if (SUCCEEDED(hr)) {
-			return std::shared_ptr<ID3D10Device1>(device10, DX11ThinWrapper::ReleaseIUnknown);
+			return std::shared_ptr<ID3D10Device1>(device10, comUtil::ReleaseIUnknown);
 		}
 		
 		throw std::runtime_error("ID3D10Device1の生成に失敗しました.");
@@ -62,7 +62,7 @@ namespace dx10 {
 
 			HANDLE sharedHandle;
 			// 共有のためのハンドルを取得
-			if (FAILED(DX11ThinWrapper::QueryInterface<IDXGIResource>(texture)->GetSharedHandle(&sharedHandle)))
+			if (FAILED(comUtil::QueryInterface<IDXGIResource>(texture)->GetSharedHandle(&sharedHandle)))
 				throw std::runtime_error("共有ハンドルの作成に失敗");
 
 

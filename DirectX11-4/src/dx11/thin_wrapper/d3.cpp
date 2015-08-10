@@ -45,32 +45,32 @@ namespace DX11ThinWrapper {
 				if (SUCCEEDED(hr)) break;
 			}
 			if (!device) throw std::runtime_error("ID3D11Deviceの生成に失敗しました.");
-			return std::shared_ptr<ID3D11Device>(device, ReleaseIUnknown);
+			return std::shared_ptr<ID3D11Device>(device, comUtil::ReleaseIUnknown);
 		}
 
 		std::shared_ptr<ID3D11Texture2D> CreateTexture2D(ID3D11Device * device, const D3D11_TEXTURE2D_DESC & descDS) {
 			ID3D11Texture2D* buffer = nullptr;
 			auto hr = device->CreateTexture2D(&descDS, nullptr, &buffer);
 			if (FAILED(hr)) throw std::runtime_error("ID3D11Texture2Dの生成に失敗しました.");
-			return std::shared_ptr<ID3D11Texture2D>(buffer, ReleaseIUnknown);
+			return std::shared_ptr<ID3D11Texture2D>(buffer, comUtil::ReleaseIUnknown);
 		}
 
 		std::shared_ptr<ID3D11Texture2D> AccessBackBuffer(IDXGISwapChain * swapChain) {
 			ID3D11Texture2D * backBuffer = nullptr;
 			auto hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
 			if (FAILED(hr)) throw std::runtime_error("スワップチェーンからバックバッファへのアクセスに失敗しました.");
-			return std::shared_ptr<ID3D11Texture2D>(backBuffer, ReleaseIUnknown);
+			return std::shared_ptr<ID3D11Texture2D>(backBuffer, comUtil::ReleaseIUnknown);
 		}
 		std::shared_ptr<ID3D11Device> AccessD3Device(IDXGISwapChain * swapChain) {
 			ID3D11Device * device = nullptr;
 			auto hr = swapChain->GetDevice(__uuidof(ID3D11Device), (void **)&device);
 			if (FAILED(hr)) throw std::runtime_error("スワップチェーンからデバイスへのアクセスに失敗しました.");
-			return std::shared_ptr<ID3D11Device>(device, ReleaseIUnknown);
+			return std::shared_ptr<ID3D11Device>(device, comUtil::ReleaseIUnknown);
 		}
 		std::shared_ptr<ID3D11DeviceContext> AccessD3Context(ID3D11Device * device) {
 			ID3D11DeviceContext * context = nullptr;
 			device->GetImmediateContext(&context);
-			return std::shared_ptr<ID3D11DeviceContext>(context, ReleaseIUnknown);
+			return std::shared_ptr<ID3D11DeviceContext>(context, comUtil::ReleaseIUnknown);
 		}
 		std::shared_ptr<ID3D11DeviceContext> AccessD3Context(IDXGISwapChain * swapChain) {
 			return AccessD3Context(AccessD3Device(swapChain).get());
@@ -79,7 +79,7 @@ namespace DX11ThinWrapper {
 		std::shared_ptr<ID3D11DepthStencilView> AccessDepthStencilView(ID3D11DeviceContext * context) {
 			ID3D11DepthStencilView * dv;
 			context->OMGetRenderTargets(1, NULL, &dv);
-			return std::shared_ptr<ID3D11DepthStencilView>(dv, ReleaseIUnknown);
+			return std::shared_ptr<ID3D11DepthStencilView>(dv, comUtil::ReleaseIUnknown);
 		}
 		std::vector<std::shared_ptr<ID3D11RenderTargetView>> AccessRenderTargetViews(
 			ID3D11DeviceContext * context, UINT numOfViews
@@ -88,7 +88,7 @@ namespace DX11ThinWrapper {
 			context->OMGetRenderTargets(numOfViews, &rv, nullptr);
 
 			std::vector<std::shared_ptr<ID3D11RenderTargetView>> rvs;
-			for (UINT i = 0; i < numOfViews; ++i) rvs.emplace_back(rv+i, ReleaseIUnknown);
+			for (UINT i = 0; i < numOfViews; ++i) rvs.emplace_back(rv + i, comUtil::ReleaseIUnknown);
 			
 			return rvs;
 		}
@@ -96,21 +96,21 @@ namespace DX11ThinWrapper {
 		std::shared_ptr<ID3D11Resource> AccessResource(ID3D11View * view) {
 			ID3D11Resource * resource;
 			view->GetResource(&resource);
-			return std::shared_ptr<ID3D11Resource>(resource, ReleaseIUnknown);
+			return std::shared_ptr<ID3D11Resource>(resource, comUtil::ReleaseIUnknown);
 		}
 
 		std::shared_ptr<ID3D11SamplerState> CreateSampler(ID3D11Device * device, const D3D11_SAMPLER_DESC & desc) {
 			ID3D11SamplerState * sampler;
 			auto hr = device->CreateSamplerState(&desc, &sampler);
 			if (FAILED(hr)) throw std::runtime_error("サンプラーの作成に失敗しました.");
-			return std::shared_ptr<ID3D11SamplerState>(sampler, ReleaseIUnknown);
+			return std::shared_ptr<ID3D11SamplerState>(sampler, comUtil::ReleaseIUnknown);
 		}
 
 		std::shared_ptr<ID3D11BlendState> CreateBlendState(ID3D11Device * device, const D3D11_BLEND_DESC *desc) {
 			ID3D11BlendState * blendState;
 			auto hr = device->CreateBlendState(desc, &blendState);
 			if (FAILED(hr)) throw std::runtime_error("ブレンドステートの作成に失敗しました.");
-			return std::shared_ptr<ID3D11BlendState>(blendState, ReleaseIUnknown);
+			return std::shared_ptr<ID3D11BlendState>(blendState, comUtil::ReleaseIUnknown);
 		}
 
 
@@ -118,7 +118,7 @@ namespace DX11ThinWrapper {
 			ID3D11DepthStencilState* dss;
 			HRESULT hr = device->CreateDepthStencilState(&desc, &dss);
 			if (FAILED(hr))	throw std::runtime_error("ID3D11DepthStencilStateの作成に失敗");
-			return std::shared_ptr<ID3D11DepthStencilState>(dss, DX11ThinWrapper::ReleaseIUnknown);
+			return std::shared_ptr<ID3D11DepthStencilState>(dss, comUtil::ReleaseIUnknown);
 
 		};
 
@@ -129,7 +129,7 @@ namespace DX11ThinWrapper {
 			ID3D11ShaderResourceView * srv;
 			auto hr = device->CreateShaderResourceView(resourceTexture, nullptr, &srv);
 			if (FAILED(hr)) throw std::runtime_error("ID3D11ShaderResourceViewの作成に失敗しました.");
-			return std::shared_ptr<ID3D11ShaderResourceView>(srv, DX11ThinWrapper::ReleaseIUnknown);
+			return std::shared_ptr<ID3D11ShaderResourceView>(srv, comUtil::ReleaseIUnknown);
 		};
 
 		

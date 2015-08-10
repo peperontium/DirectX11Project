@@ -5,7 +5,7 @@
 namespace dx11 {
 
 	std::shared_ptr<IDXGISwapChain> CreateDefaultSwapChain(
-		DXGI_MODE_DESC * displayMode, HWND hWnd, ID3D11Device * device, bool useMultiSample
+		const DXGI_MODE_DESC * displayMode, HWND hWnd, ID3D11Device * device, bool useMultiSample
 	) {
 		DXGI_SWAP_CHAIN_DESC sd;
 		::ZeroMemory(&sd, sizeof(sd));
@@ -25,7 +25,7 @@ namespace dx11 {
 			sd.SampleDesc.Quality = 0;
 			return DX11ThinWrapper::d3::CreateSwapChain(device, sd);
 		} else {
-			for (int i = D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT; i >= 0; i--) {
+			for (int i = D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT; i >= 0; --i) {
 				auto quality = DX11ThinWrapper::d3::CheckMultisampleQualityLevels(device, displayMode->Format, i);
 				if (quality == 0) continue;
 
@@ -34,6 +34,8 @@ namespace dx11 {
 				return DX11ThinWrapper::d3::CreateSwapChain(device, sd);
 			}
 		}
+
+		return nullptr;
 	}
 
 	void SetDefaultRenderTarget(IDXGISwapChain * swapChain) {
@@ -74,7 +76,7 @@ namespace dx11 {
 		ID3D11RasterizerState* rasterState_raw = nullptr;
 		HRESULT hr = DX11ThinWrapper::d3::AccessD3Device(swapChain)->CreateRasterizerState(&rsState, &rasterState_raw);
 		if (FAILED(hr)) throw std::runtime_error("ID3D11RasterizerState‚Ì¶¬‚É¸”s‚µ‚Ü‚µ‚½.");
-		auto rasterState = std::shared_ptr<ID3D11RasterizerState>(rasterState_raw, DX11ThinWrapper::ReleaseIUnknown);
+		auto rasterState = std::shared_ptr<ID3D11RasterizerState>(rasterState_raw, comUtil::ReleaseIUnknown);
 		DX11ThinWrapper::d3::AccessD3Context(swapChain)->RSSetState(rasterState_raw);
 	}
 };

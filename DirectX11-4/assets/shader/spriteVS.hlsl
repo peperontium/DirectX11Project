@@ -3,7 +3,7 @@
 */
 
 //	デフォルトは列優先(column_major)
-cbuffer Transform : register(b0) {
+cbuffer Transform : register(b3) {
 	column_major float3x2	mtxTransform	: packoffset(c0);
 	column_major float3x2	mtxTextureTransform : packoffset(c2);
 	//	色

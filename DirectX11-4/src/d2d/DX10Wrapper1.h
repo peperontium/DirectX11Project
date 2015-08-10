@@ -4,7 +4,7 @@
 #include <d2d1.h>
 #include <d3d10_1.h>
 
-#include "../dx11/DX11ThinWrapper.h"
+#include "../comUtil.h"
 
 //!	Direct3DレイヤーとDirect2Dレイヤーを共存させるためにDirectX10.1を用います
 //!	参考
@@ -39,7 +39,7 @@ namespace dx10 {
 	std::shared_ptr<T> OpenSharedResource(ID3D11Texture2D* texture11) {
 		T* sharedResource = reinterpret_cast<T*>(thin_template::OpenSharedResource_base(texture11, __uuidof(T)));
 		
-		return(std::shared_ptr<T>(sharedResource, DX11ThinWrapper::ReleaseIUnknown));
+		return(std::shared_ptr<T>(sharedResource, comUtil::ReleaseIUnknown));
 	}
 
 } //	end of namespace dx10

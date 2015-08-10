@@ -1,23 +1,13 @@
 #pragma once
-#include <memory>
+
+#include "../comUtil.h"
+
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <functional>
 #include <vector>
 
 namespace DX11ThinWrapper {
-	inline void ReleaseIUnknown(IUnknown * p) { p->Release(); }
-
-
-	template <typename T>
-	inline std::shared_ptr<T> QueryInterface(IUnknown* pUnknown) {
-		T* pResource;
-		HRESULT hr = pUnknown->QueryInterface(__uuidof(T), (LPVOID*)&pResource);
-		if (FAILED(hr))
-			throw(std::runtime_error("Query Failed"));
-
-		return std::shared_ptr<T>(pResource, DX11ThinWrapper::ReleaseIUnknown);
-	}
 
 	namespace gi {
 		// i番目のディスプレイを取得

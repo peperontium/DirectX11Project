@@ -11,7 +11,7 @@ namespace {
 		S * shaderObject = nullptr;
 		auto hr = (device->*func)(shader, size, nullptr, &shaderObject);
 		if (FAILED(hr)) throw std::runtime_error("シェーダーの生成に失敗しました.");
-		return std::shared_ptr<S>(shaderObject, DX11ThinWrapper::ReleaseIUnknown);
+		return std::shared_ptr<S>(shaderObject, comUtil::ReleaseIUnknown);
 	}
 }
 
@@ -43,7 +43,7 @@ namespace DX11ThinWrapper {
 				}
 				throw std::runtime_error("シェーダーファイルのコンパイルに失敗しました.");
 			}
-			return std::shared_ptr<ID3DBlob>(blob, ReleaseIUnknown);
+			return std::shared_ptr<ID3DBlob>(blob, comUtil::ReleaseIUnknown);
 		}
 
 		std::shared_ptr<ID3D11PixelShader> CreatePixelShader(ID3D11Device* device, const byte* shaderBytes, size_t byteSize) {
@@ -69,7 +69,7 @@ namespace DX11ThinWrapper {
 				layoutDesc, numOfLayout, shaderBytes, byteSize, &layout
 			);
 			if (FAILED(hr)) throw std::runtime_error("入力レイアウトの生成に失敗しました.");
-			return std::shared_ptr<ID3D11InputLayout>(layout, DX11ThinWrapper::ReleaseIUnknown);
+			return std::shared_ptr<ID3D11InputLayout>(layout, comUtil::ReleaseIUnknown);
 		}
 	}
 }

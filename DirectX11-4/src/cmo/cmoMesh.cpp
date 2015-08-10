@@ -1,6 +1,5 @@
 #include "cmoMesh.h"
 
-
 #include <algorithm>
 
 #include "cmoLoader.h"
@@ -199,7 +198,7 @@ namespace cmo {
 
 
 			//	メッシュ名取得
-			auto _name = loader::getString(&binaryReader);
+			_name = loader::getString(&binaryReader);
 			if (_name.empty())
 				return E_FAIL;
 
@@ -217,6 +216,7 @@ namespace cmo {
 				if (bSkeleton == nullptr)
 					return E_FAIL;
 
+				hasSkeleton = ((*bSkeleton) != 0);
 			}
 
 
@@ -404,6 +404,111 @@ namespace cmo {
 
 	}
 
+	std::vector<cmo::Mesh> Mesh::LoadMeshArray(ID3D11Device* device, const wchar_t* filePath, const wchar_t* textureDirectory) {
+
+		std::vector<cmo::Mesh> meshArray;
+
+		std::wstring textureDir;
+		if (textureDirectory == nullptr) {
+			textureDir = extractDirectoryPath(filePath);
+		} else {
+			textureDir = textureDirectory;
+		}
+
+
+
+		//	メッシュ情報読み込んでいく
+		loader::BinaryReader binaryReader;
+		HRESULT hr = binaryReader.importFile(filePath);
+		if (FAILED(hr))
+			return std::vector<cmo::Mesh>();
+
+
+		auto numMesh = binaryReader.read<UINT>();
+
+		if (*numMesh == 0) {
+			OutputDebugString(TEXT("\n--------------------\nERROR: No meshes found\n--------------------\n"));
+			return std::vector<cmo::Mesh>();
+		}
+
+
+		meshArray.resize(*numMesh);
+
+
+		for (size_t meshId = 0; meshId < *numMesh; ++meshId) {
+
+			Mesh& currentMesh = meshArray[meshId];
+
+
+			//	メッシュ名取得
+			currentMesh._name = loader::getString(&binaryReader);
+			if (currentMesh._name.empty())
+				return std::vector<cmo::Mesh>();
+
+
+
+			//	マテリアル読み込み
+			if (!loader::getMaterialArray(&currentMesh._materialArray, &currentMesh._materialIndexTable, device, textureDir.c_str(), &binaryReader))
+				return std::vector<cmo::Mesh>();
+
+
+			// ボーン情報あるかどうか
+			bool hasSkeleton = false;
+			{
+				auto bSkeleton = binaryReader.read<BYTE>();
+				if (bSkeleton == nullptr)
+					return std::vector<cmo::Mesh>();
+
+				hasSkeleton = ((*bSkeleton) != 0);
+			}
+
+
+			//	サブメッシュ読み込み
+			currentMesh._submeshArray = loader::getSubMeshArray(&binaryReader);
+			if (currentMesh._submeshArray.empty())
+				return std::vector<cmo::Mesh>();
+
+
+			// インデックスバッファ読み込みおよび作成
+			currentMesh._indexBufferArray = loader::getIndexBufferArray(device, &binaryReader);
+			if (currentMesh._indexBufferArray.empty())
+				return std::vector<cmo::Mesh>();
+
+
+			// 頂点バッファ読み込みおよび作成
+			currentMesh._vertexBufferArray = loader::getVertexBufferArray(device, &binaryReader);
+			if (currentMesh._vertexBufferArray.empty())
+				return std::vector<cmo::Mesh>();
+
+
+			// Skinning vertex buffers
+			//	読み飛ばします
+			loader::skipSkinningVertexData(&binaryReader);
+
+
+			// メッシュ情報	Extents
+			currentMesh._extent = loader::getMeshInfo(&binaryReader);
+			if (currentMesh._extent->Radius < 0)
+				return std::vector<cmo::Mesh>();
+
+			//	アニメーション、読み飛ばす
+			if (hasSkeleton) {
+				if (!loader::skipBoneAndAnimation(&binaryReader))
+					return std::vector<cmo::Mesh>();
+			}
+
+			//	シェーダーへ行列送るためのバッファ初期化
+			currentMesh._InitMatrixBuffer(device);
+
+		}	//	end of loop (*numMesh)
+
+
+
+
+		return meshArray;
+	}
+	
+
 }	// end of namespace cmo
 
 
@@ -577,7 +682,7 @@ namespace cmo {
 
 
 			//	メッシュ名取得
-			auto _name = loader::getString(&binaryReader);
+			_name = loader::getString(&binaryReader);
 			if (_name.empty())
 				return E_FAIL;
 
@@ -758,5 +863,118 @@ namespace cmo {
 		context->IASetVertexBuffers(1, 1, vbs, &stride, &offset);
 
 	}
+
+	std::vector<cmo::SkinnedMesh> SkinnedMesh::LoadMeshArray(ID3D11Device* device, const wchar_t* filePath, const wchar_t* textureDirectory) {
+
+		std::vector<cmo::SkinnedMesh> meshArray;
+
+		std::wstring textureDir;
+		if (textureDirectory == nullptr) {
+			textureDir = extractDirectoryPath(filePath);
+		} else {
+			textureDir = textureDirectory;
+		}
+
+
+		//	メッシュ情報読み込んでいく
+		loader::BinaryReader binaryReader;
+		HRESULT hr = binaryReader.importFile(filePath);
+		if (FAILED(hr))
+			return std::vector<cmo::SkinnedMesh>();
+
+
+		auto numMesh = binaryReader.read<UINT>();
+
+		if (*numMesh == 0) {
+			OutputDebugString(TEXT("\n--------------------\nERROR: No meshes found\n--------------------\n"));
+			return std::vector<cmo::SkinnedMesh>();
+		}
+
+
+		meshArray.resize(*numMesh);
+
+		for (size_t meshId = 0; meshId < *numMesh; ++meshId) {
+
+			SkinnedMesh& currentMesh = meshArray[meshId];
+
+
+			//	メッシュ名取得
+			currentMesh._name = loader::getString(&binaryReader);
+			if (currentMesh._name.empty())
+				return std::vector<cmo::SkinnedMesh>();
+
+
+
+			//	マテリアル読み込み
+			if (!loader::getMaterialArray(&currentMesh._materialArray, &currentMesh._materialIndexTable, device, textureDir.c_str(), &binaryReader))
+				return std::vector<cmo::SkinnedMesh>();
+
+
+			// ボーン情報あるかどうか
+			bool hasSkeleton = false;
+			{
+				auto bSkeleton = binaryReader.read<BYTE>();
+				if (bSkeleton == nullptr)
+					return std::vector<cmo::SkinnedMesh>();
+
+				hasSkeleton = ((*bSkeleton) != 0);
+			}
+
+
+			//	サブメッシュ読み込み
+			currentMesh._submeshArray = loader::getSubMeshArray(&binaryReader);
+			if (currentMesh._submeshArray.empty())
+				return std::vector<cmo::SkinnedMesh>();
+
+
+			// インデックスバッファ読み込みおよび作成
+			currentMesh._indexBufferArray = loader::getIndexBufferArray(device, &binaryReader);
+			if (currentMesh._indexBufferArray.empty())
+				return std::vector<cmo::SkinnedMesh>();
+
+
+			// 頂点バッファ読み込みおよび作成
+			currentMesh._vertexBufferArray = loader::getVertexBufferArray(device, &binaryReader);
+			if (currentMesh._vertexBufferArray.empty())
+				return std::vector<cmo::SkinnedMesh>();
+
+
+			// Skinning vertex buffers
+			if (!loader::getSkinningVertexBufferArray(&currentMesh._skinningVertexBufferArray, device, &binaryReader))
+				return std::vector<cmo::SkinnedMesh>();
+
+
+			// メッシュ情報	Extents
+			currentMesh._extent = loader::getMeshInfo(&binaryReader);
+			if (currentMesh._extent->Radius < 0)
+				return std::vector<cmo::SkinnedMesh>();
+
+			//	アニメーションとボーン
+			if (hasSkeleton) {
+				if (!loader::getBoneAndAnimation(&currentMesh._pBoneArray, &currentMesh._pBoneIndexTable, &currentMesh._pAnimationTable, &binaryReader))
+					return std::vector<cmo::SkinnedMesh>();
+
+				//	デフォルトのアニメーション設定
+				currentMesh._currentAnim = (*currentMesh._pAnimationTable).begin();
+				//	ボーン姿勢行列初期化
+				currentMesh._boneMtxArray.resize((*currentMesh._pBoneArray).size());
+				currentMesh._isTransformCombined.assign((*currentMesh._pBoneArray).size(), false);
+
+			} else {
+				OutputDebugStringW(L"No skeltal data found in (\n");
+				OutputDebugStringW(filePath);
+				OutputDebugStringW(L")\n");
+				assert(false);
+			}
+
+			//	シェーダーへ行列送るためのバッファ初期化
+			currentMesh._InitMatrixBuffer(device);
+	
+		}	//	end of loop (*numMesh)
+
+
+		return meshArray;
+	}
+
 
 }// end of namespace cmo

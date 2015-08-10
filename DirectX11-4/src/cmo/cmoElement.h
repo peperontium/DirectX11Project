@@ -8,7 +8,7 @@
 #include <map>
 #include <string>
 
-#include "../DXGIFormatDetection.h"
+#include "DXGIFormatDetection.h"
 
 #include <DirectXMath.h>
 #include <d3d11.h>

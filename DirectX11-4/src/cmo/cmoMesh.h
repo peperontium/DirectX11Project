@@ -1,7 +1,7 @@
 #pragma once
 
 #include "cmoElement.h"
-#include "../AxisConvert.h"
+#include "AxisConvert.h"
 #include <algorithm>
 
 
@@ -71,12 +71,11 @@ namespace cmo {
 		//!	デストラクタ
 		~Mesh() {}
 
-		//!	モデル情報ロード、ロード済みの場合は上書き
+		//!	メッシュを一つだけロード、ロード済みの場合は上書き
 		/**
 		 * @param device			デバイスへのポインタ
 		 * @param filePath			読み込む .cmoモデルファイルのパス
 		 * @param textureDirecctory	テクスチャを探すディレクトリ名、指定しない場合はモデルと同じ階層から探す
-		 * @param flipFaces			面の向きを反転するかどうか
 		 */
 		virtual HRESULT load(ID3D11Device* device, const wchar_t* filePath, const wchar_t* textureDirectory = nullptr);
 		
@@ -146,6 +145,14 @@ namespace cmo {
 			*this = mesh;
 		}
 		Mesh& operator=(const Mesh& mesh);
+
+		//!	全てのメッシュを配列として読み込む static関数。
+		/**
+		* @param device				デバイスへのポインタ
+		* @param filePath			読み込む .cmoモデルファイルのパス
+		* @param textureDirecctory	テクスチャを探すディレクトリ名、指定しない場合はモデルと同じ階層から探す
+		*/
+		static std::vector<cmo::Mesh> LoadMeshArray(ID3D11Device* device, const wchar_t* filePath, const wchar_t* textureDirectory = nullptr);
 
 	};	// end of class Mesh { ...
 
@@ -240,12 +247,11 @@ namespace cmo {
 		 * override methods
 		 *******************/
 
-		//!	モデル情報ロード、ロード済みの場合は上書き
+		//!	メッシュを一つだけロード、ロード済みの場合は上書き。
 		/**
 		* @param device				デバイスへのポインタ
 		* @param filePath			読み込む .cmoモデルファイルのパス
 		* @param textureDirecctory	テクスチャを探すディレクトリ名、指定しない場合はモデルと同じ階層から探す
-		* @param flipFaces			面の向きを反転するかどうか
 		*/
 		HRESULT load(ID3D11Device* device, const wchar_t* filePath, const wchar_t* textureDirectory = nullptr) override;
 		
@@ -282,6 +288,16 @@ namespace cmo {
 			*this = mesh;
 		}
 		SkinnedMesh& operator=(const SkinnedMesh& mesh);
+
+
+		//!	全てのメッシュを配列として読み込む
+		/**
+		* @param device				デバイスへのポインタ
+		* @param filePath			読み込む .cmoモデルファイルのパス
+		* @param textureDirecctory	テクスチャを探すディレクトリ名、指定しない場合はモデルと同じ階層から探す
+		*/
+		static std::vector<cmo::SkinnedMesh> LoadMeshArray(ID3D11Device* device, const wchar_t* filePath, const wchar_t* textureDirectory = nullptr);
+
 
 	};	// end of class SkinnedMesh { ...
 
