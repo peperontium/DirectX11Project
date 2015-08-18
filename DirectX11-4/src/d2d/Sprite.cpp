@@ -33,8 +33,8 @@ namespace d2d {
 
 
 
-	TextSprite::TextSprite(CanvasLayer2D* canvas, const wchar_t* fontName, float fontSize, D2D_COLOR_F color) :
-		SpriteBase(nullptr,canvas),
+	TextSprite::TextSprite(CanvasLayer2D* canvas2d, const wchar_t* fontName, float fontSize, D2D_COLOR_F color) :
+		SpriteBase(nullptr),
 		_usingTextureByD2D(false) {
 
 		// 作成するテクスチャ情報の設定。
@@ -43,8 +43,8 @@ namespace d2d {
 		// ・D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX はテクスチャを共有するのに必須。
 		// ・非ミップマップテクスチャのみ共有可能なため、MipLevels = 1は確定。
 		D3D11_TEXTURE2D_DESC canvasDesc = {};
-		canvasDesc.Width = _targetCanvas->getWidth();
-		canvasDesc.Height = _targetCanvas->getHeight();
+		canvasDesc.Width = canvas2d->getWidth();
+		canvasDesc.Height = canvas2d->getHeight();
 		canvasDesc.MipLevels = 1;
 		canvasDesc.ArraySize = 1;
 		canvasDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;

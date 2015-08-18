@@ -17,9 +17,11 @@ namespace {
 
 namespace d2d {
 
-	void CanvasLayer2D::init(ID3D11Device* device, int canvasWidth, int canvasHeight) {
+	void CanvasLayer2D::init(ID3D11Device* device, d3d::SceneLayer3D* renderTarget,int canvasWidth, int canvasHeight) {
 
 		using namespace DX11ThinWrapper;
+
+		_renderTarget3DScene = renderTarget;
 
 		_width = canvasWidth;
 		_height = canvasHeight;
@@ -103,11 +105,16 @@ namespace d2d {
 		_constantBuffer = d3::CreateConstantBuffer(device, nullptr, sizeof(SpriteConstBuffer), D3D11_CPU_ACCESS_WRITE);
 	}
 
+	void CanvasLayer2D::renderTexture(
+		ID3D11ShaderResourceView *texture,const D2D_MATRIX_3X2_F& transform,
+		const D2D_MATRIX_3X2_F& textureTransform, BlendMode blendMode) {
 
-	void CanvasLayer2D::updateConstantBuffer(ID3D11DeviceContext* context, const D2D_MATRIX_3X2_F& transform,
-		const D2D_MATRIX_3X2_F& textureTransform) {
-		
-		DX11ThinWrapper::d3::mapping(_constantBuffer.get(), context, [&](D3D11_MAPPED_SUBRESOURCE resource){
+		ID3D11DeviceContext* context = _renderTarget3DScene->getContext();
+			
+		FLOAT blendFactor[] = { 1, 1, 1, 1 };
+		context->OMSetBlendState(_blendState[blendMode].get(), blendFactor, 0xffffffff);
+			
+		_renderTarget3DScene->setConstants([&](D3D11_MAPPED_SUBRESOURCE resource){
 			auto param = static_cast<SpriteConstBuffer *>(resource.pData);
 
 			//	“]’u‚µ‚Â‚Âƒf[ƒ^“]‘—
@@ -123,18 +130,8 @@ namespace d2d {
 			param->texTransform[0][1] = textureTransform._21;
 			param->texTransform[1][1] = textureTransform._22;
 			param->texTransform[0][2] = textureTransform._31;
-			param->texTransform[1][2] = textureTransform._32;
-		});
-	}
-
-
-	void CanvasLayer2D::renderTexture(ID3D11DeviceContext* context, ID3D11ShaderResourceView *texture, BlendMode blendMode) {
-
-			FLOAT blendFactor[] = { 1, 1, 1, 1 };
-			context->OMSetBlendState(_blendState[blendMode].get(), blendFactor, 0xffffffff);
-
-			ID3D11Buffer* buffers[] = {_constantBuffer.get()};
-			context->VSSetConstantBuffers(3, 1, buffers);
+			param->texTransform[1][2] = textureTransform._32;}
+		, 3);
 
 			context->PSSetShaderResources(0, 1, &texture);
 

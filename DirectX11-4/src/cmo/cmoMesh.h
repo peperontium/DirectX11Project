@@ -1,8 +1,9 @@
 #pragma once
 
+#include <algorithm>
 #include "cmoElement.h"
 #include "AxisConvert.h"
-#include <algorithm>
+#include "../SceneLayer3D.h"
 
 
 //	スキンメッシュ参考
@@ -42,10 +43,6 @@ namespace cmo {
 		std::shared_ptr<ID3D11Buffer>		_mtxConstBuffer;
 
 
-		//!	定数バッファはメッシュ間で共用するためそれの保存用。あとでもう少し考えて組みなおす
-		static std::weak_ptr<ID3D11Buffer>		s_mtxConstBufferShared;
-
-
 		//!	バッファ類初期化
 		virtual void _ClearBuffers() {
 			_submeshArray.clear();
@@ -60,8 +57,6 @@ namespace cmo {
 
 		};
 
-		//!	行列用バッファに初期値（単位行列）設定
-		virtual void _InitMatrixBuffer(ID3D11Device *device);
 
 	public:
 		//!	コンストラクタ
@@ -130,9 +125,9 @@ namespace cmo {
 		//! 描画
 		/**
 		 *	@param context		コンテキストへのポインタ
-		 *	@param startSlot	ワールド変換行列を設定する、シェーダー側のバッファスロットNo
+		 *	@param startSlot	ワールド変換行列を設定するシェーダー側のバッファスロットNo
 		 */
-		virtual void render(ID3D11DeviceContext* context, UINT startSlot)const;
+		virtual void render(d3d::SceneLayer3D* scene3d, UINT startSlot)const;
 
 
 
@@ -179,14 +174,6 @@ namespace cmo {
 		//!	現在アニメーション
 		std::unordered_map<std::wstring, AnimClip>::iterator	_currentAnim;
 		
-
-		//!	ボーン行列用定数バッファ。スキニングメッシュ間で共用。
-		static std::weak_ptr<ID3D11Buffer>		s_boneMtxConstBufferShared;
-
-
-
-		//!	行列用バッファに初期値（単位行列）設定
-		void _InitMatrixBuffer(ID3D11Device *device) override;
 
 		//!	ボーン行列をすべて更新
 		void _UpdateBoneTransform();
@@ -273,9 +260,9 @@ namespace cmo {
 		//! 描画
 		/**
 		*	@param context		コンテキストへのポインタ
-		*	@param startSlot	ワールド変換行列を設定する、シェーダー側のバッファスロットNo
+		*	@param startSlot	ワールド変換行列を設定するシェーダー側のバッファスロットNo
 		*/
-		virtual void render(ID3D11DeviceContext* context, UINT startSlot)const override;
+		virtual void render(d3d::SceneLayer3D* scene3d, UINT startSlot)const override;
 
 
 

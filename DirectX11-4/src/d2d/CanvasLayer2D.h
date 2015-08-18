@@ -5,6 +5,11 @@
 #include <DirectXMath.h>
 #include <d2d1_1.h>
 
+
+#include "../SceneLayer3D.h"
+
+
+
 namespace d2d {
 
 	class CanvasLayer2D {
@@ -27,31 +32,35 @@ namespace d2d {
 		std::shared_ptr<ID3D11VertexShader>		_vertexShader;
 		std::shared_ptr<ID3D11PixelShader>		_pixelShader;
 		std::shared_ptr<ID3D11Buffer>			_constantBuffer;
-		//!	深度テスト無効化
+		//!	深度テストの無効化用
 		std::shared_ptr<ID3D11DepthStencilState>	_depthStencilState;
-		//!	アルファブレンド有効化、その他合成方法指定
+		//!	アルファブレンドの有効化およびその他合成方法指定用
 		std::shared_ptr<ID3D11BlendState>		_blendState[BlendMode_Max];
 		
-		//!	2D->3D変換用
+		//!	2D->3D変換する時用
 		int	_width, _height;
+
+		d3d::SceneLayer3D*	_renderTarget3DScene;
 
 
 	public:
-		void init(ID3D11Device* device, int canvasWidth, int canvasHeight);
+		void init(ID3D11Device* device, d3d::SceneLayer3D* renderTarget, int canvasWidth, int canvasHeight);
 		int getWidth()const {
 			return _width;
 		}
 		int getHeight()const {
 			return _height;
 		}
-		void updateConstantBuffer( ID3D11DeviceContext* context, const D2D_MATRIX_3X2_F& transform,
-			const D2D_MATRIX_3X2_F& textureTransform);
 
-		void renderTexture(ID3D11DeviceContext* context, ID3D11ShaderResourceView *texture, BlendMode blendMode = BlendMode::Default);
+		void renderTexture(
+			ID3D11ShaderResourceView *texture, const D2D_MATRIX_3X2_F& transform,
+			const D2D_MATRIX_3X2_F& textureTransform, BlendMode blendMode = BlendMode::Default);
 
 		//	各種リソースをセットして深度ステンシル無効化、描画開始
-		void beginDraw(ID3D11DeviceContext* context) {
-			//	深度ステンシルを一時的に無効化する。第二引数なんだこれ公式見てもわからんぞ
+		void beginDraw() {
+			ID3D11DeviceContext* context = _renderTarget3DScene->getContext();
+
+			//	深度ステンシルを一時的に無効化する。第二引数なんだろうこれ
 			context->OMSetDepthStencilState(_depthStencilState.get(), 0);
 
 			context->IASetInputLayout(_inputLayout.get());
@@ -68,9 +77,9 @@ namespace d2d {
 
 		}
 		//	深度ステンシルを元に戻す
-		void endDraw(ID3D11DeviceContext* context) {
+		void endDraw() {
 			//	深度テストをデフォルトに戻す。デフォルトで良いのか？
-			context->OMSetDepthStencilState(nullptr, 0);
+			_renderTarget3DScene->getContext()->OMSetDepthStencilState(nullptr, 0);
 		}
 	};
 

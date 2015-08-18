@@ -10,12 +10,10 @@ namespace d2d {
 		std::shared_ptr<ID3D11ShaderResourceView>	_texture;
 		D2D_MATRIX_3X2_F _transform;
 		D2D_MATRIX_3X2_F _textureTransform;
-		CanvasLayer2D* _targetCanvas;
-		SpriteBase(std::shared_ptr<ID3D11ShaderResourceView> texture, CanvasLayer2D* canvas) :
+		SpriteBase(std::shared_ptr<ID3D11ShaderResourceView> texture) :
 			_texture(texture),
 			_transform(D2D1::Matrix3x2F::Identity()),
-			_textureTransform(D2D1::Matrix3x2F::Identity()),
-			_targetCanvas(canvas){
+			_textureTransform(D2D1::Matrix3x2F::Identity()){
 		}
 
 	public:
@@ -29,10 +27,10 @@ namespace d2d {
 		void _ReadTextureSize();
 
 		//	2Dでの変換行列から3Dの座標変換行列を取得
-		D2D_MATRIX_3X2_F _GetTransformMatrix3D(const D2D_MATRIX_3X2_F& transform2D)const {
+		D2D_MATRIX_3X2_F _GetTransformMatrix3D(d2d::CanvasLayer2D *canvas2d, const D2D_MATRIX_3X2_F& transform2D)const {
 
-			float canvasWidth = _targetCanvas->getWidth()*1.0f;
-			float canvasHeight = _targetCanvas->getHeight()*1.0f;
+			float canvasWidth = canvas2d->getWidth()*1.0f;
+			float canvasHeight = canvas2d->getHeight()*1.0f;
 
 			D2D_MATRIX_3X2_F converted = transform2D;
 			converted._11 *= _texWidth / canvasWidth;
@@ -47,8 +45,8 @@ namespace d2d {
 		}
 
 	public:
-		Sprite(std::shared_ptr<ID3D11ShaderResourceView> texture, CanvasLayer2D* canvas) :
-			SpriteBase(texture,canvas)
+		Sprite(std::shared_ptr<ID3D11ShaderResourceView> texture, CanvasLayer2D* canvas2d) :
+			SpriteBase(texture)
 		{
 			_ReadTextureSize();
 		}
@@ -57,11 +55,10 @@ namespace d2d {
 			_texture = texture;
 			_ReadTextureSize();
 		}
-		void render(ID3D11DeviceContext* context, CanvasLayer2D::BlendMode blendMode = CanvasLayer2D::BlendMode::Default)const{
+		void render(d2d::CanvasLayer2D *canvas2d, CanvasLayer2D::BlendMode blendMode = CanvasLayer2D::BlendMode::Default)const{
 			//	T /= screen -> S *= (tex/scr)
-			D2D_MATRIX_3X2_F transform3D = _GetTransformMatrix3D(_transform);
-			_targetCanvas->updateConstantBuffer(context, transform3D, _textureTransform);
-			_targetCanvas->renderTexture(context, _texture.get(), blendMode);
+			D2D_MATRIX_3X2_F transform3D = _GetTransformMatrix3D(canvas2d,_transform);
+			canvas2d->renderTexture(_texture.get(),transform3D, _textureTransform, blendMode);
 		}
 		void setTransform(const D2D_MATRIX_3X2_F& transform) {
 			_transform = transform;
@@ -112,7 +109,7 @@ namespace d2d {
 		}
 		
 	public:
-		TextSprite(CanvasLayer2D* canvas,
+		TextSprite(CanvasLayer2D* canvas2d,
 			const wchar_t* fontName = L"メイリオ", float fontSize = 20.0f, D2D_COLOR_F color = D2D1::ColorF(D2D1::ColorF::White));
 		void setColor(D2D_COLOR_F color) {
 			_brush->SetColor(color);
@@ -130,13 +127,12 @@ namespace d2d {
 		void drawText(const std::wstring& text, const D2D1_RECT_F& drawRect)const  {
 			this->drawText(text.c_str(), text.length(),drawRect);
 		}
-		void render(ID3D11DeviceContext* context)const{
+		void render(d2d::CanvasLayer2D *canvas2d)const {
 			if (_usingTextureByD2D) {
 				_EndD2DRendering();
 				_usingTextureByD2D = false;
 			}
-			_targetCanvas->updateConstantBuffer(context,_transform, _textureTransform);
-			_targetCanvas->renderTexture(context, _texture.get(), CanvasLayer2D::BlendMode::PreMultiPlyedAlpha);
+			canvas2d->renderTexture(_texture.get(), _transform, _textureTransform, CanvasLayer2D::BlendMode::PreMultiPlyedAlpha);
 		}
 	};
 

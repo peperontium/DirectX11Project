@@ -33,11 +33,12 @@ namespace d3d {
 		}
 	}
 
-	void Camera::setBuffer(ID3D11DeviceContext* context, UINT startSlot)const {
+	void Camera::setBuffer(SceneLayer3D* scene3d, UINT startSlot)const {
 
 		const DirectX::XMFLOAT4& eyePos =  _eyePosition;
 		const DirectX::XMFLOAT4 * pTarget = _pTracePosition;
-
+		
+		auto context = scene3d->getContext();
 		DX11ThinWrapper::d3::mapping(_mtxConstBuffer.get(), context, [&](D3D11_MAPPED_SUBRESOURCE resource){
 			auto param = static_cast<DirectX::XMFLOAT4X4 *>(resource.pData);
 			auto mtxView = DirectX::XMMatrixLookAtLH(

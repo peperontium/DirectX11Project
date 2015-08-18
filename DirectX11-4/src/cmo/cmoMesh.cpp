@@ -85,27 +85,6 @@ namespace {
 
 //	Rigid Model
 namespace cmo {
-	//	実体定義
-	std::weak_ptr<ID3D11Buffer>		Mesh::s_mtxConstBufferShared;
-
-	//------------------------
-	//	protected functions
-	//------------------------
-	void Mesh::_InitMatrixBuffer(ID3D11Device *device) {
-
-		//	作成済みの共用バッファがあるならそれを用いる
-		_mtxConstBuffer = Mesh::s_mtxConstBufferShared.lock();
-
-		if (_mtxConstBuffer == nullptr) {
-			//	未作成の場合は作る
-			XMStoreFloat4x4(&_mtxWorld, XMMatrixIdentity());
-			_mtxConstBuffer = d3::CreateConstantBuffer(device, &_mtxWorld, sizeof(XMFLOAT4X4), D3D11_CPU_ACCESS_WRITE);
-			Mesh::s_mtxConstBufferShared = _mtxConstBuffer;
-		} else {
-			//	バッファ作成済みの場合単位行列で初期化
-			this->updateMatrix(XMMatrixIdentity());
-		}
-	}
 
 	//	コピー用代入演算子
 	Mesh& Mesh::operator=(const Mesh& source) {
@@ -141,7 +120,6 @@ namespace cmo {
 
 		//	行列データを移す。
 		//	デバイスはグローバルから引っ張ってくる。許して
-		this->_InitMatrixBuffer(dx11::AccessDX11Device());
 		this->updateMatrix(
 			XMLoadFloat4x4(&source._mtxWorld));
 
@@ -259,11 +237,6 @@ namespace cmo {
 
 		}	//	end of loop (*numMesh)
 
-
-		//	シェーダーへ行列送るためのバッファ初期化
-		_InitMatrixBuffer(device);
-
-
 		return S_OK;
 	}
 
@@ -336,18 +309,20 @@ namespace cmo {
 
 	}
 
-	void Mesh::render(ID3D11DeviceContext* context, UINT startSlot)const {
+	void Mesh::render(d3d::SceneLayer3D* scene3d, UINT startSlot)const {
 
 		assert(_vertexShader != nullptr);
 		assert(_pixelShader != nullptr);
 
-		//	行列更新
-		d3::mapping(_mtxConstBuffer.get(), context, [&](D3D11_MAPPED_SUBRESOURCE resource) {
-			auto param = (XMFLOAT4X4*)(resource.pData);
-			XMStoreFloat4x4(param,
-				XMMatrixTranspose(axis::getAxisConvertMatrix(axis::ModelCoordinate::Blender)*XMLoadFloat4x4(&_mtxWorld))
-				);
-		});
+		ID3D11DeviceContext* context = scene3d->getContext();
+
+		//	行列を定数バッファへセット
+		scene3d->setConstants(
+			[&](D3D11_MAPPED_SUBRESOURCE resource) {
+				auto param = (XMFLOAT4X4*)(resource.pData);
+				XMStoreFloat4x4(param,
+				XMMatrixTranspose(axis::getAxisConvertMatrix(axis::ModelCoordinate::Blender)*XMLoadFloat4x4(&_mtxWorld)));}
+		,startSlot);
 
 
 		//	入力レイアウト、描画方式の設定
@@ -496,9 +471,6 @@ namespace cmo {
 					return std::vector<cmo::Mesh>();
 			}
 
-			//	シェーダーへ行列送るためのバッファ初期化
-			currentMesh._InitMatrixBuffer(device);
-
 		}	//	end of loop (*numMesh)
 
 
@@ -513,28 +485,10 @@ namespace cmo {
 
 //	Skinning Model
 namespace cmo {
-	//	実体
-	std::weak_ptr<ID3D11Buffer>		SkinnedMesh::s_boneMtxConstBufferShared;
 
 	//------------------------
 	//	private functions
 	//------------------------
-
-	void SkinnedMesh::_InitMatrixBuffer(ID3D11Device *device) {
-
-		//	作成済みの共用バッファがあるならそれを用いる
-		_mtxConstBuffer = SkinnedMesh::s_boneMtxConstBufferShared.lock();
-
-		if (_mtxConstBuffer == nullptr) {
-			//	未作成の場合は作る
-			XMStoreFloat4x4(&_mtxWorld, XMMatrixIdentity());
-			_mtxConstBuffer = d3::CreateConstantBuffer(device, nullptr, sizeof(XMFLOAT4X4)*cmo::Max_Bone, D3D11_CPU_ACCESS_WRITE);
-			SkinnedMesh::s_boneMtxConstBufferShared = _mtxConstBuffer;
-		} else {
-			//	バッファ作成済みの場合単位行列で初期化
-			this->updateMatrix(XMMatrixIdentity());
-		}
-	}
 
 	void SkinnedMesh::_UpdateBoneTransform() {
 		
@@ -755,10 +709,6 @@ namespace cmo {
 		}	//	end of loop (*numMesh)
 
 
-		//	シェーダーへ行列送るためのバッファ初期化
-		_InitMatrixBuffer(device);
-
-
 		return S_OK;
 	}
 
@@ -786,18 +736,15 @@ namespace cmo {
 	}
 
 
-	void SkinnedMesh::render(ID3D11DeviceContext* context, UINT startSlot)const {
+	void SkinnedMesh::render(d3d::SceneLayer3D* scene3d, UINT startSlot)const {
 
 		assert(_vertexShader != nullptr);
 		assert(_pixelShader != nullptr);
 
+		ID3D11DeviceContext* context = scene3d->getContext();
+
 		//	行列更新
-		//	ラムダキャプチャ用の一時変数
-		auto& boneMtxArray = this->_boneMtxArray;
-		d3::mapping(_mtxConstBuffer.get(), context, [&](D3D11_MAPPED_SUBRESOURCE resource) {
-			auto param = (XMFLOAT4X4*)(resource.pData);
-			std::copy(_boneMtxArray.begin(), _boneMtxArray.end(), param);
-		});
+
 
 
 		//	入力レイアウト、描画方式の設定
@@ -809,9 +756,13 @@ namespace cmo {
 		context->PSSetShader(_pixelShader.get(), nullptr, 0);
 
 		//	ワールド変換行列設定
-		ID3D11Buffer * boneBuffers[] = { _mtxConstBuffer.get() };
-		//	↓ここの第一引数（設定対象のバッファの場所）はシェーダーに応じて変更する必要あり
-		context->VSSetConstantBuffers(startSlot, 1, boneBuffers);
+		//	ラムダキャプチャ用の一時変数
+		auto& boneMtxArray = this->_boneMtxArray;
+		scene3d->setConstants(
+			[&](D3D11_MAPPED_SUBRESOURCE resource) {
+				auto param = (XMFLOAT4X4*)(resource.pData);
+				std::copy(_boneMtxArray.begin(), _boneMtxArray.end(), param);}
+			,startSlot);
 
 
 		//	描画
@@ -966,9 +917,6 @@ namespace cmo {
 				assert(false);
 			}
 
-			//	シェーダーへ行列送るためのバッファ初期化
-			currentMesh._InitMatrixBuffer(device);
-	
 		}	//	end of loop (*numMesh)
 
 

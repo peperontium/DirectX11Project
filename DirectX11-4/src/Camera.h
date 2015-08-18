@@ -48,6 +48,6 @@ namespace d3d {
 				DirectX::XMVector4Transform(DirectX::XMLoadFloat4(&_eyePosition), mtx)
 				);
 		}
-		void setBuffer(ID3D11DeviceContext* context,UINT startSlot)const;
+		void setBuffer(SceneLayer3D* scene3d, UINT startSlot)const;
 	};
 }
