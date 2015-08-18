@@ -102,9 +102,6 @@
     <ClInclude Include="src\DXGIFormatDetection.h">
       <Filter>ヘッダー ファイル\cmo</Filter>
     </ClInclude>
-    <ClInclude Include="src\ShaderBytes.h">
-      <Filter>ヘッダー ファイル\d2d</Filter>
-    </ClInclude>
     <ClInclude Include="src\System.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -122,6 +119,9 @@
     </ClInclude>
     <ClInclude Include="src\comUtil.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\d2d\ShaderBytes.h">
+      <Filter>ヘッダー ファイル\d2d</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

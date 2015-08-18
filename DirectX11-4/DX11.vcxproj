@@ -91,6 +91,7 @@
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\comUtil.h" />
+    <ClInclude Include="src\d2d\ShaderBytes.h" />
     <ClInclude Include="src\SceneLayer3D.h" />
     <ClInclude Include="src\dx11\DX11ResourceCache.h" />
     <ClInclude Include="src\System.h" />
@@ -112,7 +113,6 @@
     </ClInclude>
     <ClInclude Include="src\dx11\WICTextureLoader.h" />
     <ClInclude Include="src\DXGIFormatDetection.h" />
-    <ClInclude Include="src\ShaderBytes.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\win\com_ptr.hpp" />
     <ClInclude Include="src\win\WICThinWrapper.h" />
@@ -161,6 +161,7 @@
     </FxCompile>
     <FxCompile Include="assets\shader\spriteVS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

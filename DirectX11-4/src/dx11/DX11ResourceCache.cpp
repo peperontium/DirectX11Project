@@ -3,17 +3,15 @@
 #include "DX11GlobalDevice.h"
 #include "DX11ThinWrapper.h"
 
-#include <cstdio>
+#include <fstream>
 #include <thread>
 
 
 namespace {
 	inline bool isFileExist(const std::wstring& path) {
 
-		FILE* fp;
-		if ((fp = _wfopen(path.c_str(), L"r")) != nullptr) {
-			fclose(fp);
-
+		std::fstream fs(path.c_str());
+		if (fs) {
 			return true;
 		}
 		return false;
