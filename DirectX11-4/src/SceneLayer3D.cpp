@@ -3,7 +3,7 @@
 #include "./dx11/DX11ThinWrapper.h"
 #include "./dx11/DX11DefaultSetting.h"
 
-namespace d3 {
+namespace d3d {
 
 
 	void SceneLayer3D::init(ID3D11Device* device, const DXGI_MODE_DESC& displayMode, HWND hWnd) {
@@ -26,6 +26,10 @@ namespace d3 {
 			device, nullptr, sizeof(DirectX::XMFLOAT4X4), D3D11_CPU_ACCESS_WRITE
 			);
 		_aspectRatio = displayMode.Width / static_cast<float>(displayMode.Height);
+
+		_constantBuffer = DX11ThinWrapper::d3::CreateConstantBuffer(
+			device, nullptr, ConstantBufferSize, D3D11_CPU_ACCESS_WRITE
+			);
 	}
 
 	void SceneLayer3D::setCustomSamplar(ID3D11Device* device) {
@@ -56,7 +60,7 @@ namespace d3 {
 		_context->OMSetBlendState(blendState.get(), blendFactor, 0xffffffff);
 	}
 
-	void SceneLayer3D::setProjection(ID3D11Device* device, float fovRadian, int startSlot) {
+	void SceneLayer3D::setProjection(float fovRadian, UINT startSlot) {
 
 
 		DirectX::XMFLOAT4X4 param;
@@ -72,5 +76,12 @@ namespace d3 {
 		ID3D11Buffer * projectionBuffers[] = { _projectionMtxBuffer.get() };
 		_context->VSSetConstantBuffers(startSlot, 1, projectionBuffers);
 
+	}
+
+	void SceneLayer3D::setConstants(std::function<void(D3D11_MAPPED_SUBRESOURCE)> mapFunc, UINT startSlot) {
+		DX11ThinWrapper::d3::mapping(_constantBuffer.get(),_context.get(),mapFunc);
+
+		ID3D11Buffer * constantBuffers[] = { _constantBuffer.get() };
+		_context->VSSetConstantBuffers(startSlot, 1, constantBuffers);
 	}
 }

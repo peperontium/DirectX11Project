@@ -15,7 +15,7 @@ namespace {
 	};
 }
 
-namespace d2 {
+namespace d2d {
 
 	void CanvasLayer2D::init(ID3D11Device* device, int canvasWidth, int canvasHeight) {
 

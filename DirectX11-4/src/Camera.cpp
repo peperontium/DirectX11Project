@@ -2,7 +2,7 @@
 
 #include "./dx11/DX11ThinWrapper.h"
 
-namespace d3 {
+namespace d3d {
 	std::weak_ptr<ID3D11Buffer> Camera::s_mtxConstBufferShared;
 	
 	const DirectX::XMFLOAT4 Camera::ZeroEyePosition = DirectX::XMFLOAT4(0,0,0,1);

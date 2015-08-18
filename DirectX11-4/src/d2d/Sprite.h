@@ -3,7 +3,7 @@
 #include "CanvasLayer2D.h"
 #include <string>
 
-namespace d2 {
+namespace d2d {
 	
 	class SpriteBase {
 	protected:

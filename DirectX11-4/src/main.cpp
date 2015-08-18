@@ -32,20 +32,20 @@ int APIENTRY _tWinMain(
 		//	DirectX10.1デバイスを11のものと同じ設定で作成
 		dx10::DX10DeviceSharedGuard deviceGuard10(device);
 
-		d2::CanvasLayer2D	canvas2D;
+		d2d::CanvasLayer2D	canvas2D;
 
-		d3::SceneLayer3D	scene3D;
+		d3d::SceneLayer3D	scene3D;
 
 		canvas2D.init(device, modeDesc.Width, modeDesc.Height);
 		
 		scene3D.init(device, modeDesc, window.getHWnd());
 
-		d2::Sprite sprite(dx11::ResourceCache::Texture::Get(L"./assets/circle.png"), &canvas2D);
-		d2::TextSprite textspr(&canvas2D, L"メイリオ", 50.0f);
+		d2d::Sprite sprite(dx11::ResourceCache::Texture::Get(L"./assets/circle.png"), &canvas2D);
+		d2d::TextSprite textspr(&canvas2D, L"メイリオ", 50.0f);
 
 		scene3D.setCustomBlendMode(device);
 		scene3D.setCustomSamplar(device);
-		scene3D.setProjection(device, DirectX::XM_PI / 6, 0);
+		scene3D.setProjection(DirectX::XM_PI / 6, 0);
 
 		auto context = DX11ThinWrapper::d3::AccessD3Context(device);
 
@@ -72,7 +72,7 @@ int APIENTRY _tWinMain(
 		skinnedMesh.applyVS(skinningVS, skinningVS_blob,device);
 		skinnedMesh.setAnimation(L"walk");
 
-		d3::Camera camera(device);
+		d3d::Camera camera(device);
 		camera.setEyePosition(DirectX::XMFLOAT4(0,3,-10,1));
 		
 		int timer = 0;
@@ -96,7 +96,7 @@ int APIENTRY _tWinMain(
 
 			if (timer > 120) {
 				sprite.setTransform(D2D1::Matrix3x2F::Translation(40, 0));
-				sprite.render(context.get(), d2::CanvasLayer2D::BlendMode::Add);
+				sprite.render(context.get(), d2d::CanvasLayer2D::BlendMode::Add);
 //				sprite.render(context.get());
 			}
 			wchar_t text[100];

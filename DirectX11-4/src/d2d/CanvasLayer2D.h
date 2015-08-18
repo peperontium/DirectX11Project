@@ -5,7 +5,7 @@
 #include <DirectXMath.h>
 #include <d2d1_1.h>
 
-namespace d2 {
+namespace d2d {
 
 	class CanvasLayer2D {
 	private:

@@ -3,8 +3,9 @@
 #include "DX10Wrapper1.h"
 #include "D2DWrapper.h"
 #include "../dx11/DX11GlobalDevice.h"
+#include "../dx11/DX11ThinWrapper.h"
 
-namespace d2 {
+namespace d2d {
 
 	//	設計気持ち悪いけれど他に手段ないのかなぁ
 	void Sprite::_ReadTextureSize() {
@@ -36,8 +37,6 @@ namespace d2 {
 		SpriteBase(nullptr,canvas),
 		_usingTextureByD2D(false) {
 
-		using namespace DX11ThinWrapper;
-
 		// 作成するテクスチャ情報の設定。
 		// ・DXGI_FORMAT_B8G8R8A8_UNORM は固定。
 		// ・D3D11_BIND_RENDER_TARGET は D2D での描画対象とするために必須。
@@ -57,7 +56,7 @@ namespace d2 {
 
 		ID3D11Device* device = dx11::AccessDX11Device();
 
-		auto tex2D = d3::CreateTexture2D(device, canvasDesc);
+		auto tex2D = DX11ThinWrapper::d3::CreateTexture2D(device, canvasDesc);
 
 		//	共有のためのD3D11のキーミューテックスを取得
 		_keyedMutex11 = comUtil::QueryInterface<IDXGIKeyedMutex>(tex2D.get());
@@ -71,20 +70,20 @@ namespace d2 {
 		_keyedMutex10 = comUtil::QueryInterface<IDXGIKeyedMutex>(surface10.get());
 
 		// D2D のレンダーターゲットを D3D 10.1 の共有サーフェイスから生成
-		_renderTarget2D = d2::CreateDXGISurfaceRenderTarget(
+		_renderTarget2D = d2d::CreateDXGISurfaceRenderTarget(
 			surface10.get(), D2D1::RenderTargetProperties(
 			D2D1_RENDER_TARGET_TYPE_HARDWARE, D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED))
 			);
 
 
 		//	共有テクスチャを基にシェーダーリソースビューの作成
-		_texture = d3::CreateShaderResourceView(device, tex2D.get());
+		_texture = DX11ThinWrapper::d3::CreateShaderResourceView(device, tex2D.get());
 
 		//	描画位置設定
 		_transform._31 = -1.0f, _transform._32 = 1.0f;
 
 		//	デフォルト設定
-		_format = d2::CreateTextFormat(fontName,fontSize);
-		_brush  = d2::CreateSolidColorBrush(_renderTarget2D.get(),color);
+		_format = d2d::CreateTextFormat(fontName,fontSize);
+		_brush  = d2d::CreateSolidColorBrush(_renderTarget2D.get(),color);
 	}
 }

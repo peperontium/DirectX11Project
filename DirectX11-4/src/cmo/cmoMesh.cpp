@@ -36,8 +36,7 @@ namespace {
 	}
 
 
-	//	とりあえず線形補完
-	void interpolateAnimationKeyframe(
+	void lerpAnimationKeyframe(
 		XMFLOAT4X4* outMtx, float time,
 		const std::map<float, cmo::element::Keyframe>& keyframeArray) {
 		
@@ -313,7 +312,7 @@ namespace cmo {
 
 	}
 
-	//	ループぶん回す以外に方法無くないですかコレ
+	//	ループぶん回す以外に探す方法無くないですかコレ
 	void Mesh::replaceTexture(const wchar_t* dstTextureName, std::shared_ptr<ID3D11ShaderResourceView> &srcTexture, const wchar_t* srcTextureName) {
 #if (DEBUG || _DEBUG)
 		bool update = false;
@@ -545,7 +544,7 @@ namespace cmo {
 		const auto& KeyFrames = _currentAnim->second.BoneKeyframe;
 		
 		for (size_t boneId = 0; boneId < KeyFrames.size(); ++boneId)
-			interpolateAnimationKeyframe(&_boneMtxArray[boneId],currentFrame,KeyFrames[boneId]);
+			lerpAnimationKeyframe(&_boneMtxArray[boneId],currentFrame,KeyFrames[boneId]);
 
 
 		_isTransformCombined.assign((*_pBoneArray).size(), false);

@@ -22,7 +22,7 @@ namespace {
 }
 
 
-namespace d2 {
+namespace d2d {
 
 
 	std::shared_ptr<IDWriteTextFormat> CreateTextFormat(

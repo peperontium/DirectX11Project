@@ -4,7 +4,7 @@
 #include <DirectXMath.h>
 #include <memory>
 
-namespace d3 {
+namespace d3d {
 
 	class Camera {
 	private:

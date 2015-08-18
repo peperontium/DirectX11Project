@@ -2,12 +2,17 @@
 
 #include <memory>
 #include <d3d11.h>
+#include <functional>
 
-namespace d3 {
+namespace d3d {
 	
 
 	//	主に3D描画レイヤーを保持、操作
 	class SceneLayer3D {
+	private:
+		//	共用定数バッファのサイズ、現状使い得る最大サイズで決め打ち
+		const size_t ConstantBufferSize = sizeof(DirectX::XMFLOAT4X4)*32;
+
 	private:
 		std::shared_ptr<ID3D11DeviceContext>	_context;
 		std::shared_ptr<IDXGISwapChain>			_swapChain;
@@ -15,6 +20,7 @@ namespace d3 {
 		std::shared_ptr<ID3D11RenderTargetView>	_renderTargetView;
 		std::shared_ptr<ID3D11DepthStencilView>	_depthStencilView;
 
+		std::shared_ptr<ID3D11Buffer>		_constantBuffer;
 		std::shared_ptr<ID3D11Buffer>		_projectionMtxBuffer;
 
 		//	アスペクト比、投影行列指定の時に使う
@@ -35,7 +41,19 @@ namespace d3 {
 		 *	@param fovRadian	視野角（ラジアン単位）
 		 *	@param startSlot	シェーダーのバッファスロットNo
 		 */
-		void setProjection(ID3D11Device* device, float fovRadian, int startSlot);
+		void setProjection(float fovRadian, UINT startSlot);
+
+		
+		/**
+		 *	定数バッファに数値書き込み、設定
+		 *	@param mapFunc		マッピング用関数
+		 *	@param startSlot	シェーダーのバッファスロットNo
+		 */
+		void setConstants(std::function<void(D3D11_MAPPED_SUBRESOURCE)> mapFunc, UINT startSlot);
+
+		ID3D11DeviceContext* getContext()const{
+			return _context.get();
+		}
 
 		//! バックバッファおよび深度バッファをクリア
 		void clearViews() {

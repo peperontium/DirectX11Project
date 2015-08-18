@@ -8,7 +8,7 @@
 #include <stdexcept>
 
 
-namespace d2 {
+namespace d2d {
 	//!	DXGIのサーフェイスへの描画を行うDirect2Dレンダーターゲットを作成
 	std::shared_ptr<ID2D1RenderTarget> CreateDXGISurfaceRenderTarget(
 		IDXGISurface *surface, const D2D1_RENDER_TARGET_PROPERTIES& rtp = D2D1::RenderTargetProperties());
