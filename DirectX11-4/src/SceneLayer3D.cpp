@@ -5,6 +5,9 @@
 
 namespace d3d {
 
+	const float SceneLayer3D::ClipNearZ = 0.5f;
+	const float SceneLayer3D::ClipFarZ = 100.0f;
+
 
 	void SceneLayer3D::init(ID3D11Device* device, const DXGI_MODE_DESC& displayMode, HWND hWnd) {
 
@@ -34,45 +37,52 @@ namespace d3d {
 
 	void SceneLayer3D::setCustomSamplar(ID3D11Device* device) {
 
-		D3D11_SAMPLER_DESC samplerDesc = dx11::SamplerState(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_WRAP);
+		if (_samplerState == nullptr) {
+			D3D11_SAMPLER_DESC samplerDesc = dx11::SamplerState(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_WRAP);
 
-		auto sampler = DX11ThinWrapper::d3::CreateSampler(device, samplerDesc);
-		ID3D11SamplerState* states[] = { sampler.get() };
+			_samplerState = DX11ThinWrapper::d3::CreateSampler(device, samplerDesc);
+		}
+
+		ID3D11SamplerState* states[] = { _samplerState.get() };
 		_context->PSSetSamplers(0, 1, states);
 	}
 	
-	void SceneLayer3D::setCustomBlendMode(ID3D11Device* device) {
+	void SceneLayer3D::setCustomBlendState(ID3D11Device* device) {
 		//	ブレンド設定
 		
-		D3D11_BLEND_DESC blendDesc[] = { {
-			FALSE, FALSE, {
-				{
-					TRUE,
-					D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA, D3D11_BLEND_OP_ADD,
-					D3D11_BLEND_ZERO, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD,
-					D3D11_COLOR_WRITE_ENABLE_ALL
-				}
-			}
-		} };
-		auto blendState = DX11ThinWrapper::d3::CreateBlendState(device, blendDesc);
+		if (_blendState == nullptr) {
+			D3D11_BLEND_DESC blendDesc[] = { {
+					FALSE, FALSE, {
+						{
+							TRUE,
+							D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA, D3D11_BLEND_OP_ADD,
+							D3D11_BLEND_ZERO, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD,
+							D3D11_COLOR_WRITE_ENABLE_ALL
+						}
+					}
+				} };
+			_blendState = DX11ThinWrapper::d3::CreateBlendState(device, blendDesc);
+		}
 
 		FLOAT blendFactor[] = { 1, 1, 1, 1 };
-		_context->OMSetBlendState(blendState.get(), blendFactor, 0xffffffff);
+		_context->OMSetBlendState(_blendState.get(), blendFactor, 0xffffffff);
 	}
 
 	void SceneLayer3D::setProjection(float fovRadian, UINT startSlot) {
 
+		//	視野角に変更がある場合バッファ更新
+		if (_fovRadian != fovRadian) {
+			DirectX::XMFLOAT4X4 param;
+			DX11ThinWrapper::d3::mapping(_projectionMtxBuffer.get(), _context.get(), [&](D3D11_MAPPED_SUBRESOURCE resource) {
+				auto param = static_cast<DirectX::XMFLOAT4X4 *>(resource.pData);
 
-		DirectX::XMFLOAT4X4 param;
+				DirectX::XMMATRIX mtxProj = DirectX::XMMatrixPerspectiveFovLH(
+					fovRadian, _aspectRatio, ClipNearZ, ClipFarZ);
+				XMStoreFloat4x4(param, DirectX::XMMatrixTranspose(mtxProj));
+			});
+		}
 
-		DX11ThinWrapper::d3::mapping(_projectionMtxBuffer.get(), _context.get(), [&](D3D11_MAPPED_SUBRESOURCE resource) {
-			auto param = static_cast<DirectX::XMFLOAT4X4 *>(resource.pData);
-
-			DirectX::XMMATRIX mtxProj = DirectX::XMMatrixPerspectiveFovLH(
-				fovRadian, _aspectRatio, 1.0f, 100.0f);
-			XMStoreFloat4x4(param, DirectX::XMMatrixTranspose(mtxProj));
-		});
-
+		_fovRadian = fovRadian;
 		ID3D11Buffer * projectionBuffers[] = { _projectionMtxBuffer.get() };
 		_context->VSSetConstantBuffers(startSlot, 1, projectionBuffers);
 

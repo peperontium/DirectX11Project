@@ -78,7 +78,7 @@ namespace cmo {
 		//!	マテリアル取得
 		const std::shared_ptr<cmo::element::Material>	getMaterial(const wchar_t* matName) const {
 			if (_materialIndexTable.count(matName) != 0) {
-				return(_materialArray[_materialIndexTable(matName)]);
+				return(_materialArray[_materialIndexTable.at(matName)]);
 			}
 			
 
@@ -173,7 +173,7 @@ namespace cmo {
 		std::shared_ptr<std::unordered_map<std::wstring, AnimClip>>		_pAnimationTable;
 		//!	現在アニメーション
 		std::unordered_map<std::wstring, AnimClip>::iterator	_currentAnim;
-		
+
 
 		//!	ボーン行列をすべて更新
 		void _UpdateBoneTransform();
@@ -204,10 +204,13 @@ namespace cmo {
 		
 		//!	ボーン名からワールド変換行列取得
 		//!	行優先行列を返す
-		void getBoneMatrix( DirectX::XMFLOAT4X4* pMatrix, const wchar_t* boneName)const {
+		void getBoneWorldTransform( DirectX::XMFLOAT4X4* pMatrix, const wchar_t* boneName)const {
 			using namespace DirectX;
 			if (_pBoneIndexTable->count(boneName) != 0) {
-				XMStoreFloat4x4(pMatrix,XMMatrixTranspose(XMLoadFloat4x4(&_boneMtxArray[_pBoneIndexTable->at(boneName)])));
+				unsigned int idx = _pBoneIndexTable->at(boneName);
+				//	姿勢行列×ローカル変換行列	でワールドの姿勢を取得
+				XMStoreFloat4x4(pMatrix,
+					XMLoadFloat4x4(&_pBoneArray->at(idx).BindPos)*XMMatrixTranspose(XMLoadFloat4x4(&_boneMtxArray[idx])));
 			}
 		}
 

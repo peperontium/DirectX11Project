@@ -40,6 +40,12 @@
     <Filter Include="ソース ファイル\d2d">
       <UniqueIdentifier>{4e9a84bb-abfd-470a-81db-c95689a62530}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\effekseer">
+      <UniqueIdentifier>{e9a668f7-46e9-4ed7-89a7-26e3194ae74f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\effekseer">
+      <UniqueIdentifier>{95a6c477-4aa2-4132-bde6-b68334401978}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\stdafx.h">
@@ -123,6 +129,18 @@
     <ClInclude Include="src\d2d\ShaderBytes.h">
       <Filter>ヘッダー ファイル\d2d</Filter>
     </ClInclude>
+    <ClInclude Include="src\effekseer\Effekseer.h">
+      <Filter>ヘッダー ファイル\effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\effekseer\EffekseerRendererDX11.h">
+      <Filter>ヘッダー ファイル\effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\effekseer\EffekseerSoundXAudio2.h">
+      <Filter>ヘッダー ファイル\effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\effekseer\effekseerWrapper.h">
+      <Filter>ヘッダー ファイル\effekseer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -202,6 +220,9 @@
     </ClCompile>
     <ClCompile Include="src\Camera.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="src\effekseer\effekseerWrapper.cpp">
+      <Filter>ソース ファイル\effekseer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

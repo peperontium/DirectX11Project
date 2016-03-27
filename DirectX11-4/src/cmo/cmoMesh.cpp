@@ -515,7 +515,7 @@ namespace cmo {
 			XMMATRIX invPose = XMLoadFloat4x4(&(*_pBoneArray)[b].InvBindPos);
 			XMMATRIX transformMtx = XMLoadFloat4x4(&_boneMtxArray[b]);
 
-
+			
 			XMStoreFloat4x4(&_boneMtxArray[b],
 				XMMatrixTranspose(
 					(invPose * transformMtx)*axis::getAxisConvertMatrix(axis::ModelCoordinate::Blender) *worldMtx
@@ -707,7 +707,6 @@ namespace cmo {
 			break;
 
 		}	//	end of loop (*numMesh)
-
 
 		return S_OK;
 	}

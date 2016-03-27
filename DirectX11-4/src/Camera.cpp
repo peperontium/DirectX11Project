@@ -9,7 +9,8 @@ namespace d3d {
 
 	Camera::Camera(ID3D11Device* device) :
 		_eyePosition(0,0,-8.0,1),
-		_pTracePosition(&ZeroEyePosition)
+		_pTracePosition(&ZeroEyePosition),
+		_mtxDirty(true)
 	{
 
 		DirectX::XMFLOAT4X4 param;
@@ -35,19 +36,15 @@ namespace d3d {
 
 	void Camera::setBuffer(SceneLayer3D* scene3d, UINT startSlot)const {
 
-		const DirectX::XMFLOAT4& eyePos =  _eyePosition;
-		const DirectX::XMFLOAT4 * pTarget = _pTracePosition;
-		
 		auto context = scene3d->getContext();
-		DX11ThinWrapper::d3::mapping(_mtxConstBuffer.get(), context, [&](D3D11_MAPPED_SUBRESOURCE resource){
+
+		
+		DX11ThinWrapper::d3::mapping(_mtxConstBuffer.get(), context, [&](D3D11_MAPPED_SUBRESOURCE resource) {
 			auto param = static_cast<DirectX::XMFLOAT4X4 *>(resource.pData);
-			auto mtxView = DirectX::XMMatrixLookAtLH(
-				DirectX::XMLoadFloat4(&eyePos),
-				DirectX::XMLoadFloat4(pTarget),
-				DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 1)
-				);
-			XMStoreFloat4x4(param, DirectX::XMMatrixTranspose(mtxView));
+			DirectX::XMMATRIX mtxView = DirectX::XMLoadFloat4x4(&_cameraMtx);
+			DirectX::XMStoreFloat4x4(param, DirectX::XMMatrixTranspose(mtxView));
 		});
+
 		ID3D11Buffer * cameraBuffers[] = { _mtxConstBuffer.get() };
 		//	スロット1にカメラ行列を設定
 		context->VSSetConstantBuffers(startSlot, 1, cameraBuffers);

@@ -6,6 +6,8 @@
 #include "Camera.h"
 #include "System.h"
 #include "SceneLayer3D.h"
+#include "effekseer/effekseerWrapper.h"
+
 
 int APIENTRY _tWinMain(
 	HINSTANCE,
@@ -18,11 +20,11 @@ int APIENTRY _tWinMain(
 	// ウィンドウ生成
 	DXGI_MODE_DESC modeDesc = DX11ThinWrapper::gi::GetOptDisplayMode(800, 600);
 	win::Window window(
-		TEXT("window"), TEXT("window"), {0, 0, modeDesc.Width, modeDesc.Height}, WS_OVERLAPPEDWINDOW, win::DefaultProcedure
+		TEXT("window"), TEXT("window"), {0, 0, (LONG)modeDesc.Width, (LONG)modeDesc.Height}, WS_OVERLAPPEDWINDOW, win::DefaultProcedure
 	);
 //	window.setShowState(SW_SHOW);
 
-	sys::SetFPS(30);
+	sys::SetFPS(60);
 
 	{
 		// 初期化
@@ -41,11 +43,8 @@ int APIENTRY _tWinMain(
 		d2d::Sprite sprite(dx11::ResourceCache::Texture::Get(L"./assets/circle.png"), &canvas2D);
 		d2d::TextSprite textspr(&canvas2D, L"メイリオ", 50.0f);
 
-		scene3D.setCustomBlendMode(device);
 		scene3D.setCustomSamplar(device);
 		scene3D.setProjection(DirectX::XM_PI / 6, 0);
-
-		auto context = DX11ThinWrapper::d3::AccessD3Context(device);
 
 		
 
@@ -71,16 +70,32 @@ int APIENTRY _tWinMain(
 		skinnedMesh.setAnimation(L"walk");
 
 		d3d::Camera camera(device);
-		camera.setEyePosition(DirectX::XMFLOAT4(0,3,-10,1));
+		camera.setEyePosition(DirectX::XMFLOAT4(1,3,-10,1));
 		
+		effekseer11::EffectLayer effectLayer;
+		effectLayer.init(device,scene3D.getContext());
+		effectLayer.setProjectionMatrix(scene3D.getProjectionMatrix());
+		effekseer11::Effect effect(&effectLayer);
+		if(effect.reset(L"./assets/tes.efk") == false)
+			assert(false);
+		effect.play(0,2,10);
+		DirectX::XMFLOAT4X4 handPosR;
+
+
+		window.setShowState(SW_SHOW);
+		
+
 		int timer = 0;
 		// メインループ
 		while (sys::Update()) {
 			timer++;
 
 			scene3D.clearViews();
+			scene3D.setCustomBlendState(device);
+			scene3D.setProjection(DirectX::XM_PI / 6, 0);
 
 			camera.rotateY(0.01);
+			camera.update();
 			camera.setBuffer(&scene3D, 1);
 
 			//	スキンメッシュモデルの行列更新、描画
@@ -89,14 +104,25 @@ int APIENTRY _tWinMain(
 				DirectX::XMMatrixRotationY(DirectX::XM_PI / 3.5)*DirectX::XMMatrixTranslation(0, -1, 0.5)
 				);
 			skinnedMesh.render(&scene3D, 2);
+			skinnedMesh.getBoneWorldTransform(&handPosR, L"hand_R");
+
+
+			effectLayer.setProjectionMatrix(scene3D.getProjectionMatrix());
+			effectLayer.setCameraMatrix(camera.getMatrix());
+			effect.setTransform(handPosR);
+			effectLayer.drawAll();
+			if (timer == 20)
+				effect.setPauseState(true);
+
 
 			canvas2D.beginDraw();
 
-			if (timer > 120) {
-				sprite.setTransform(D2D1::Matrix3x2F::Translation(40, 0));
+			if (timer > 12) {
+				//sprite.setTransform();
+				sprite.setTransform(D2D1::Matrix3x2F::Rotation(timer * 3, D2D1::Point2F(225, 225))*D2D1::Matrix3x2F::Translation(-50, -150));
 				sprite.render(&canvas2D, d2d::CanvasLayer2D::BlendMode::Add);
-//				sprite.render(context.get());
 			}
+			
 			wchar_t text[100];
 			wsprintf(text, L"timer = %d", timer);
 			textspr.drawText(text, lstrlenW(text), D2D1::RectF(0, 400, 600, 800));
@@ -108,8 +134,6 @@ int APIENTRY _tWinMain(
 			if (FAILED(scene3D.present()))
 				SendMessage(window.getHWnd(),WM_CLOSE,0,0);
 
-			if (timer > 40)
-				window.setShowState(SW_SHOW);
 		}
 
 	}

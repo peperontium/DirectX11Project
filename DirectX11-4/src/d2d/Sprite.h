@@ -17,6 +17,7 @@ namespace d2d {
 		}
 
 	public:
+
 		~SpriteBase() {}
 	};
 
@@ -33,14 +34,16 @@ namespace d2d {
 			float canvasHeight = canvas2d->getHeight()*1.0f;
 
 			D2D_MATRIX_3X2_F converted = transform2D;
-			converted._11 *= _texWidth / canvasWidth;
-			converted._12 *= _texHeight /canvasHeight;
-			converted._21 *= _texWidth / canvasWidth;
-			converted._22 *= _texHeight / canvasHeight;
 			
-			converted._31 = (converted._31/(canvasWidth / 2)) - 1;
+			converted._11 *= _texWidth / canvasWidth;
+			converted._12 *= -_texHeight /canvasHeight;
+			converted._21 *= -_texWidth / canvasWidth;
+			converted._22 *= _texHeight / canvasHeight;
+
+			converted._31 = (converted._31 / (canvasWidth / 2)) - 1;
 			converted._32 = 1 - (converted._32 / (canvasHeight / 2));
 
+			
 			return converted;
 		}
 
